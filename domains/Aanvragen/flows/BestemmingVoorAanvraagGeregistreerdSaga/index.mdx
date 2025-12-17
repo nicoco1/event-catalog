@@ -1,0 +1,26 @@
+---
+id: BestemmingVoorAanvraagGeregistreerdSaga
+name: Bestemming voor Aanvraag Geregistreerd Saga
+version: 1.0.0
+summary: Flow voor het sturen van ontvangstbevestiging na toekenning van bestemming aan aanvraag 
+steps:
+  - id: "aanvraag_bestemming_geregistreerd"
+    title: Bestemming geregistreerd
+    summary: Bestemming voor aanvraag is geregistreerd
+    message:
+      id: BestemmingVoorAanvraagGeregistreerdEvent
+      version: 1.0.0
+---
+
+### Flow of feature
+<NodeGraph/>
+ 
+## Flow description
+
+Deze flow beschrijft het proces nadat een bestemming is geregistreerd voor een aanvraag in de AanvragenService.
+
+- **Trigger:** `BestemmingVoorAanvraagGeregistreerdEvent` (gepubliceerd door `AanvragenService`)
+
+## Linked artefacts
+
+- Bestemming event: [BestemmingVoorAanvraagGeregistreerdEvent](services/AanvragenService/events/BestemmingVoorAanvraagGeregistreerdEvent/index.mdx)
