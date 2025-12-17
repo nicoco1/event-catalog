@@ -1,0 +1,36 @@
+---
+id: AanvragenService
+name: AanvragenService
+version: 1.0.0
+summary: |
+  Service that contains aanvragen related information
+
+receives:
+  - id: RegistreerAanvraagKotlabelApiRequest
+    version: 1.0.0
+  - id: NieuweAanvraagGeregistreerdEvent
+    version: 1.0.0
+
+sends:
+  - id: NieuweAanvraagGeregistreerdEvent
+    version: 1.0.0
+  - id: BestemmingVoorAanvraagGeregistreerdEvent
+    version: 1.0.0
+
+badges:
+  - content: New service
+    backgroundColor: blue
+    textColor: blue
+
+specifications:
+  - type: openapi
+    path: aanvragenOpenApi.json
+    name: OpenAPI Specification
+---
+
+## Overview
+
+De AanvragenService is een microservice die verantwoordelijk is voor het beheren van aanvragen. 
+Deze service is daarnaast ook verantwoordelijk voor het orkestreren van integraties met het formulierenloket en Dosis.
+
+<NodeGraph />
