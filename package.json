@@ -8,9 +8,14 @@
     "start": "eventcatalog start",
     "preview": "eventcatalog preview",
     "generate": "eventcatalog generate",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:eventcatalog": "eventcatalog-linter",
+    "lint:eventcatalog:verbose": "eventcatalog-linter --verbose"
   },
   "dependencies": {
     "@eventcatalog/core": "^3.0.0-beta.23"
+  },
+  "devDependencies": {
+    "@eventcatalog/linter": "^0.0.5"
   }
 }
