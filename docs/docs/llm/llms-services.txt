@@ -5,13 +5,13 @@
 Service voor het beheren van aanvragen
 
 ### Sends
-- [Nieuwe Aanvraag Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - 
-- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - 
+- [Nieuwe Aanvraag Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - Wordt getriggerd wanneer een nieuwe aanvraag (zonder bestemming) is geregistreerd in de aanvragenservice.
+- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - Wordt getriggerd wanneer een bestemming is geregistreerd voor een aanvraag.
 
 ### Receives
-- [Registreer Aanvraag Kotlabel - 1.0.0](https://eventcatalog.dev/docs/events/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - 
-- [Upload Document Request - 1.0.0](https://eventcatalog.dev/docs/events/UploadDocumentRequest/1.0.0.mdx) - 
-- [Nieuwe Aanvraag Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - 
+- [Registreer Aanvraag Kotlabel - 1.0.0](https://eventcatalog.dev/docs/events/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - Maakt een nieuwe kotlabel aanvraag aan in de aanvragenservice.
+- [Upload Document Request - 1.0.0](https://eventcatalog.dev/docs/events/UploadDocumentRequest/1.0.0.mdx) - Upload bijlage van het FormulierenLoket naar VLOK als document.
+- [Nieuwe Aanvraag Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - Wordt getriggerd wanneer een nieuwe aanvraag (zonder bestemming) is geregistreerd in de aanvragenservice.
 
 ### Writes to
 - Does not write to any containers
@@ -24,12 +24,12 @@ Service voor het beheren van aanvragen
 Service voor de integratie met het FormulierenLoket om aanvragen te verwerken
 
 ### Sends
-- [Registreer Aanvraag Kotlabel - 1.0.0](https://eventcatalog.dev/docs/events/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - 
-- [Upload Document Request - 1.0.0](https://eventcatalog.dev/docs/events/UploadDocumentRequest/1.0.0.mdx) - 
+- [Registreer Aanvraag Kotlabel - 1.0.0](https://eventcatalog.dev/docs/events/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - Maakt een nieuwe kotlabel aanvraag aan in de aanvragenservice.
+- [Upload Document Request - 1.0.0](https://eventcatalog.dev/docs/events/UploadDocumentRequest/1.0.0.mdx) - Upload bijlage van het FormulierenLoket naar VLOK als document.
 
 ### Receives
-- [Formulier Aanvraag Kotlabel Submitted - 1.0.0](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - 
-- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - 
+- [Formulier Aanvraag Kotlabel Submitted - 1.0.0](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - Wordt getriggerd wanneer een gebruiker een kotlabel aanvraag indient via het FormulierenLoket.
+- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - Wordt getriggerd wanneer een bestemming is geregistreerd voor een aanvraag.
 
 ### Writes to
 - Does not write to any containers
@@ -58,7 +58,7 @@ Service voor de integratie met DOSIS en NotificatieService
 Service met webhooks voor het FormulierenLoket. Deze fungeert als producer bij nieuwe aanvragen vanuit het FormulierenLoket.
 
 ### Sends
-- [Formulier Aanvraag Kotlabel Submitted - 1.0.0](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - 
+- [Formulier Aanvraag Kotlabel Submitted - 1.0.0](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - Wordt getriggerd wanneer een gebruiker een kotlabel aanvraag indient via het FormulierenLoket.
 
 ### Receives
 - Does not receive any messages

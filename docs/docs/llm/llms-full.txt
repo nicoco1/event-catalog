@@ -1,6 +1,8 @@
 ---
 id: BestemmingVoorAanvraagGeregistreerdEvent
 name: Bestemming Geregistreerd
+summary: |
+  Wordt getriggerd wanneer een bestemming is geregistreerd voor een aanvraag.
 version: 1.0.0
 ---
 
@@ -24,6 +26,8 @@ Een voorbeeld van de payload die wordt verzonden met dit event:
 ---
 id: FormulierAanvraagKotlabelSubmittedEvent
 name: Formulier Aanvraag Kotlabel Submitted
+summary: |
+  Wordt getriggerd wanneer een gebruiker een kotlabel aanvraag indient via het FormulierenLoket.
 version: 1.0.0
 ---
 
@@ -48,6 +52,8 @@ Een voorbeeld van de payload die wordt verzonden met dit event:
 ---
 id: NieuweAanvraagGeregistreerdEvent
 name: Nieuwe Aanvraag Geregistreerd
+summary: |
+  Wordt getriggerd wanneer een nieuwe aanvraag (zonder bestemming) is geregistreerd in de aanvragenservice.
 version: 1.0.0
 ---
 
@@ -73,6 +79,8 @@ Een voorbeeld van de payload die wordt verzonden met dit event:
 ---
 id: RegistreerAanvraagKotlabelApiRequest
 name: Registreer Aanvraag Kotlabel
+summary: |
+  Maakt een nieuwe kotlabel aanvraag aan in de aanvragenservice.
 version: 1.0.0
 ---
 
@@ -86,6 +94,8 @@ Wanneer dit command wordt ontvangen, zal de AanvragenService de formuliergegeven
 ---
 id: UploadDocumentRequest
 name: Upload Document Request
+summary: |
+  Upload bijlage van het FormulierenLoket naar VLOK als document.
 version: 1.0.0
 ---
 
@@ -3833,6 +3843,7 @@ Deze service is daarnaast ook verantwoordelijk voor het orkestreren van integrat
 id: Core
 name: "VLOK Core"
 version: 1.0.0
+summary: Het core systeem van VLOK dat de basisfunctionaliteiten en services omvat.
 # services:
   # - id: BackendService
   # - id: RestService
@@ -3846,6 +3857,7 @@ Het VLOK Core domein bevat de kernservices en functionaliteiten die de basis vor
 ---
 id: Aanvragen
 name: Aanvragen
+summary: Beheer en verwerking van aanvragen binnen het VLOK systeem.
 version: 1.0.0
 
 services:

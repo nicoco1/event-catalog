@@ -3,10 +3,15 @@
 > This internal platform provides a comprehensive view of our event-driven architecture across all systems. Use this portal to discover existing domains, explore services and their dependencies, and understand the message contracts that connect our infrastructure
 
 ## Events
-- [Bestemming Geregistreerd - BestemmingVoorAanvraagGeregistreerdEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - [Formulier Aanvraag Kotlabel Submitted - FormulierAanvraagKotlabelSubmittedEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - [Nieuwe Aanvraag Geregistreerd - NieuweAanvraagGeregistreerdEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) 
+- [Bestemming Geregistreerd - BestemmingVoorAanvraagGeregistreerdEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - Wordt getriggerd wanneer een bestemming is geregistreerd voor een aanvraag.
+- [Formulier Aanvraag Kotlabel Submitted - FormulierAanvraagKotlabelSubmittedEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - Wordt getriggerd wanneer een gebruiker een kotlabel aanvraag indient via het FormulierenLoket.
+- [Nieuwe Aanvraag Geregistreerd - NieuweAanvraagGeregistreerdEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - Wordt getriggerd wanneer een nieuwe aanvraag (zonder bestemming) is geregistreerd in de aanvragenservice.
+
 
 ## Commands
-- [Registreer Aanvraag Kotlabel - RegistreerAanvraagKotlabelApiRequest - 1.0.0 ](https://eventcatalog.dev/docs/commands/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - [Upload Document Request - UploadDocumentRequest - 1.0.0 ](https://eventcatalog.dev/docs/commands/UploadDocumentRequest/1.0.0.mdx) 
+- [Registreer Aanvraag Kotlabel - RegistreerAanvraagKotlabelApiRequest - 1.0.0 ](https://eventcatalog.dev/docs/commands/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - Maakt een nieuwe kotlabel aanvraag aan in de aanvragenservice.
+- [Upload Document Request - UploadDocumentRequest - 1.0.0 ](https://eventcatalog.dev/docs/commands/UploadDocumentRequest/1.0.0.mdx) - Upload bijlage van het FormulierenLoket naar VLOK als document.
+
 
 ## Queries
 
@@ -19,7 +24,7 @@
 
 
 ## Domains
-- [VLOK Core - Core - 1.0.0 ](https://eventcatalog.dev/docs/domains/Core/1.0.0.mdx) - [Aanvragen - Aanvragen - 1.0.0 ](https://eventcatalog.dev/docs/domains/Aanvragen/1.0.0.mdx) 
+- [VLOK Core - Core - 1.0.0 ](https://eventcatalog.dev/docs/domains/Core/1.0.0.mdx) - Het core systeem van VLOK dat de basisfunctionaliteiten en services omvat.- [Aanvragen - Aanvragen - 1.0.0 ](https://eventcatalog.dev/docs/domains/Aanvragen/1.0.0.mdx) - Beheer en verwerking van aanvragen binnen het VLOK systeem.
 
 ## Flows
 - [Nieuw aanvraag formulier ontvangen - NieuweAanvraagKotlabelSubmittedFlow - 1.0.0 ](https://eventcatalog.dev/docs/flows/NieuweAanvraagKotlabelSubmittedFlow/1.0.0.mdx) - Flow voor het ontvangen en verwerken van een ingediend kotlabel aanvraagformulier
