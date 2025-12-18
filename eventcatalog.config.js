@@ -14,7 +14,8 @@ export default {
   trailingSlash: false,
   // Change to make the base url of the site different, by default https://{website}.com/docs,
   // changing to /company would be https://{website}.com/company/docs,
-  base: '/',
+  base: '/event-catalog/',
+
   // Customize the logo, add your logo to public/ folder
   logo: {
     alt: 'EventCatalog Logo',
