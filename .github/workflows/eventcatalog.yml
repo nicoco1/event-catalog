@@ -1,0 +1,30 @@
+name: Build EventCatalog
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci || npm install
+      - run: npm run build
+      - run: npm run build
+
+      - run: git status
+      - run: git config user.name "github-actions"
+      - run: git config user.email "github-actions@github.com"
+
+      - run: |
+          git add docs
+          git commit -m "Update EventCatalog" || exit 0
+          git push
