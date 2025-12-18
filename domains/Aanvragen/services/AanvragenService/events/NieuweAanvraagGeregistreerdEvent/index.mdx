@@ -4,8 +4,6 @@ name: Nieuwe Aanvraag Geregistreerd
 version: 1.0.0
 ---
 
-import Footer from '@layouts/Footer.astro';
-
 ## Overview
 Het `NieuweAanvraagGeregistreerdEvent` wordt gepubliceerd door de AanvragenService wanneer een nieuwe aanvraag succesvol is geregistreerd in het systeem. 
 Dit event kan worden gebruikt door andere services om te reageren op de creatie van nieuwe aanvragen.
@@ -24,5 +22,3 @@ Een voorbeeld van de payload die wordt verzonden met dit event:
   "AanvraagReferte": "AV25-00000001"
 }
 ```
-
-<Footer />
