@@ -66,21 +66,21 @@
     }
   ],
   "entries": {
-    "file:///home/runner/work/event-catalog/event-catalog/node_modules/zod-to-json-schema/changelog.md": "changelogs",
-    "file:///home/runner/work/event-catalog/event-catalog/node_modules/react-syntax-highlighter/node_modules/lowlight/changelog.md": "changelogs",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/aanvragenservice/commands/uploaddocumentrequest/index.mdx": "commands",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/aanvragenservice/commands/registreeraanvraagkotlabelapirequest/index.mdx": "commands",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/index.mdx": "domains",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/core/index.mdx": "domains",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/aanvragenservice/events/bestemmingvooraanvraaggeregistreerdevent/index.mdx": "events",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/aanvragenservice/events/nieuweaanvraaggeregistreerdevent/index.mdx": "events",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/loketwebhookendpoint/events/formulieraanvraagkotlabelsubmittedevent/index.mdx": "events",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/flows/bestemmingvooraanvraaggeregistreerdsagaflow/index.mdx": "flows",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/flows/formulieraanvraagkotlabelsubmittedflow/index.mdx": "flows",
-    "file:///home/runner/work/event-catalog/event-catalog/pages/index.mdx": "pages",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/aanvragenservice/index.mdx": "services",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/integrationprocessformulierenloket/index.mdx": "services",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/loketwebhookendpoint/index.mdx": "services",
-    "file:///home/runner/work/event-catalog/event-catalog/domains/aanvragen/services/integrationprocessstatus/index.mdx": "services"
+    "file:///e:/_vlok-stuff/vlok-event-catalog/node_modules/react-syntax-highlighter/node_modules/lowlight/changelog.md": "changelogs",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/node_modules/zod-to-json-schema/changelog.md": "changelogs",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/aanvragenservice/commands/registreeraanvraagkotlabelapirequest/index.mdx": "commands",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/aanvragenservice/commands/uploaddocumentrequest/index.mdx": "commands",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/core/index.mdx": "domains",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/index.mdx": "domains",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/aanvragenservice/events/bestemmingvooraanvraaggeregistreerdevent/index.mdx": "events",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/loketwebhookendpoint/events/formulieraanvraagkotlabelsubmittedevent/index.mdx": "events",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/aanvragenservice/events/nieuweaanvraaggeregistreerdevent/index.mdx": "events",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/flows/formulieraanvraagkotlabelsubmittedflow/index.mdx": "flows",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/flows/bestemmingvooraanvraaggeregistreerdsagaflow/index.mdx": "flows",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/pages/index.mdx": "pages",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/integrationprocessformulierenloket/index.mdx": "services",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/loketwebhookendpoint/index.mdx": "services",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/integrationprocessstatus/index.mdx": "services",
+    "file:///e:/_vlok-stuff/vlok-event-catalog/domains/aanvragen/services/aanvragenservice/index.mdx": "services"
   }
 }

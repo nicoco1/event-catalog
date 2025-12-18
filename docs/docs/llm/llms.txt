@@ -3,27 +3,27 @@
 > This internal platform provides a comprehensive view of our event-driven architecture across all systems. Use this portal to discover existing domains, explore services and their dependencies, and understand the message contracts that connect our infrastructure
 
 ## Events
-- [Bestemming Geregistreerd - BestemmingVoorAanvraagGeregistreerdEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - [Nieuwe Aanvraag Geregistreerd - NieuweAanvraagGeregistreerdEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - [Formulier Aanvraag Kotlabel Submitted - FormulierAanvraagKotlabelSubmittedEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) 
+- [Bestemming Geregistreerd - BestemmingVoorAanvraagGeregistreerdEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - [Formulier Aanvraag Kotlabel Submitted - FormulierAanvraagKotlabelSubmittedEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - [Nieuwe Aanvraag Geregistreerd - NieuweAanvraagGeregistreerdEvent - 1.0.0 ](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) 
 
 ## Commands
-- [Upload Document Request - UploadDocumentRequest - 1.0.0 ](https://eventcatalog.dev/docs/commands/UploadDocumentRequest/1.0.0.mdx) - [Registreer Aanvraag Kotlabel - RegistreerAanvraagKotlabelApiRequest - 1.0.0 ](https://eventcatalog.dev/docs/commands/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) 
+- [Registreer Aanvraag Kotlabel - RegistreerAanvraagKotlabelApiRequest - 1.0.0 ](https://eventcatalog.dev/docs/commands/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - [Upload Document Request - UploadDocumentRequest - 1.0.0 ](https://eventcatalog.dev/docs/commands/UploadDocumentRequest/1.0.0.mdx) 
 
 ## Queries
 
 
 ## Services
-- [AanvragenService - AanvragenService - 1.0.0 ](https://eventcatalog.dev/docs/services/AanvragenService/1.0.0.mdx) - Service voor het beheren van aanvragen
 - [IntegrationProcess FormulierenLoket - IntegrationProcessFormulierenLoket - 1.0.0 ](https://eventcatalog.dev/docs/services/IntegrationProcessFormulierenLoket/1.0.0.mdx) - Service voor de integratie met het FormulierenLoket om aanvragen te verwerken
 - [LoketWebhookEndpoint - LoketWebhookEndpoint - 1.0.0 ](https://eventcatalog.dev/docs/services/LoketWebhookEndpoint/1.0.0.mdx) - Service met webhooks voor het FormulierenLoket. Deze fungeert als producer bij nieuwe aanvragen vanuit het FormulierenLoket.
 - [IntegrationProcess Status - IntegrationProcessStatus - 1.0.0 ](https://eventcatalog.dev/docs/services/IntegrationProcessStatus/1.0.0.mdx) - Service voor de integratie met DOSIS en NotificatieService
+- [AanvragenService - AanvragenService - 1.0.0 ](https://eventcatalog.dev/docs/services/AanvragenService/1.0.0.mdx) - Service voor het beheren van aanvragen
 
 
 ## Domains
-- [Aanvragen - Aanvragen - 1.0.0 ](https://eventcatalog.dev/docs/domains/Aanvragen/1.0.0.mdx) - [VLOK Core - Core - 1.0.0 ](https://eventcatalog.dev/docs/domains/Core/1.0.0.mdx) 
+- [VLOK Core - Core - 1.0.0 ](https://eventcatalog.dev/docs/domains/Core/1.0.0.mdx) - [Aanvragen - Aanvragen - 1.0.0 ](https://eventcatalog.dev/docs/domains/Aanvragen/1.0.0.mdx) 
 
 ## Flows
-- [Bestemming Voor Aanvraag Geregistreerd Saga Flow - BestemmingVoorAanvraagGeregistreerdSaga Flow - 1.0.0 ](https://eventcatalog.dev/docs/flows/BestemmingVoorAanvraagGeregistreerdSaga Flow/1.0.0.mdx) - Flow voor het verwerken van een aanvraag nadat een bestemming geregistreerd werd. Dit omvat het versturen van een ontvangstbevestiging notificatie, dosis dossier aanmaak en aanvraag documenten overnemen in VLOK.
 - [Nieuw aanvraag formulier ontvangen - NieuweAanvraagKotlabelSubmittedFlow - 1.0.0 ](https://eventcatalog.dev/docs/flows/NieuweAanvraagKotlabelSubmittedFlow/1.0.0.mdx) - Flow voor het ontvangen en verwerken van een ingediend kotlabel aanvraagformulier
+- [Bestemming Voor Aanvraag Geregistreerd Saga Flow - BestemmingVoorAanvraagGeregistreerdSaga Flow - 1.0.0 ](https://eventcatalog.dev/docs/flows/BestemmingVoorAanvraagGeregistreerdSaga Flow/1.0.0.mdx) - Flow voor het verwerken van een aanvraag nadat een bestemming geregistreerd werd. Dit omvat het versturen van een ontvangstbevestiging notificatie, dosis dossier aanmaak en aanvraag documenten overnemen in VLOK.
 
 ## Channels
 

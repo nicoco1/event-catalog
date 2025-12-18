@@ -22,6 +22,30 @@ Een voorbeeld van de payload die wordt verzonden met dit event:
 ```
 
 ---
+id: FormulierAanvraagKotlabelSubmittedEvent
+name: Formulier Aanvraag Kotlabel Submitted
+version: 1.0.0
+---
+
+## Overview
+Het event wordt getrigger wanneer een gebruiker een kotlabel aanvraag indient via het FormulierenLoket.
+
+
+## Architecture diagram
+
+<NodeGraph />
+
+## Payload example
+
+Een voorbeeld van de payload die wordt verzonden met dit event:
+
+```json title="Payload example"
+{
+  "DossierId": "D78BD34F-CFBC-40B0-8785-E201FB87C3A8"
+}
+```
+
+---
 id: NieuweAanvraagGeregistreerdEvent
 name: Nieuwe Aanvraag Geregistreerd
 version: 1.0.0
@@ -47,28 +71,17 @@ Een voorbeeld van de payload die wordt verzonden met dit event:
 ```
 
 ---
-id: FormulierAanvraagKotlabelSubmittedEvent
-name: Formulier Aanvraag Kotlabel Submitted
+id: RegistreerAanvraagKotlabelApiRequest
+name: Registreer Aanvraag Kotlabel
 version: 1.0.0
 ---
 
 ## Overview
-Het event wordt getrigger wanneer een gebruiker een kotlabel aanvraag indient via het FormulierenLoket.
 
-
-## Architecture diagram
+De `RegistreerAanvraagKotlabelApiRequest` command wordt gebruikt om een nieuw kotlabel aanvraagformulier te verwerken dat is ingediend via het FormulierenLoket. 
+Wanneer dit command wordt ontvangen, zal de AanvragenService de formuliergegevens ophalen en een nieuwe aanvraag aanmaken in het systeem.
 
 <NodeGraph />
-
-## Payload example
-
-Een voorbeeld van de payload die wordt verzonden met dit event:
-
-```json title="Payload example"
-{
-  "DossierId": "D78BD34F-CFBC-40B0-8785-E201FB87C3A8"
-}
-```
 
 ---
 id: UploadDocumentRequest
@@ -83,15 +96,63 @@ De `UploadDocumentRequest` command wordt gebruikt om een bijlage die is ingedien
 <NodeGraph />
 
 ---
-id: RegistreerAanvraagKotlabelApiRequest
-name: Registreer Aanvraag Kotlabel
+id: IntegrationProcessFormulierenLoket
+name: IntegrationProcess FormulierenLoket
 version: 1.0.0
+summary: |
+  Service voor de integratie met het FormulierenLoket om aanvragen te verwerken
+
+sends:
+  - id: RegistreerAanvraagKotlabelApiRequest
+    version: 1.0.0
+  - id: UploadDocumentRequest
+    version: 1.0.0
+
+receives:
+  - id: FormulierAanvraagKotlabelSubmittedEvent
+    version: 1.0.0
+  - id: BestemmingVoorAanvraagGeregistreerdEvent
+    version: 1.0.0
 ---
 
 ## Overview
 
-De `RegistreerAanvraagKotlabelApiRequest` command wordt gebruikt om een nieuw kotlabel aanvraagformulier te verwerken dat is ingediend via het FormulierenLoket. 
-Wanneer dit command wordt ontvangen, zal de AanvragenService de formuliergegevens ophalen en een nieuwe aanvraag aanmaken in het systeem.
+Service voor de integratie met het FormulierenLoket om aanvragen te verwerken. 
+
+<NodeGraph />
+
+---
+id: LoketWebhookEndpoint
+name: LoketWebhookEndpoint
+version: 1.0.0
+summary: |
+  Service met webhooks voor het FormulierenLoket. Deze fungeert als producer bij nieuwe aanvragen vanuit het FormulierenLoket.
+
+sends:
+  - id: FormulierAanvraagKotlabelSubmittedEvent
+    version: 1.0.0
+
+---
+
+## Overview
+
+Service met webhooks voor het FormulierenLoket. Deze fungeert als producer bij nieuwe aanvragen vanuit het FormulierenLoket.
+
+<NodeGraph />
+
+---
+id: IntegrationProcessStatus
+name: IntegrationProcess Status
+version: 1.0.0
+summary: |
+  Service voor de integratie met DOSIS en NotificatieService
+
+
+---
+
+## Overview
+
+Service voor de integratie met DOSIS en NotificatieService
 
 <NodeGraph />
 
@@ -3769,88 +3830,6 @@ Deze service is daarnaast ook verantwoordelijk voor het orkestreren van integrat
   ]
 }
 ---
-id: IntegrationProcessFormulierenLoket
-name: IntegrationProcess FormulierenLoket
-version: 1.0.0
-summary: |
-  Service voor de integratie met het FormulierenLoket om aanvragen te verwerken
-
-sends:
-  - id: RegistreerAanvraagKotlabelApiRequest
-    version: 1.0.0
-  - id: UploadDocumentRequest
-    version: 1.0.0
-
-receives:
-  - id: FormulierAanvraagKotlabelSubmittedEvent
-    version: 1.0.0
-  - id: BestemmingVoorAanvraagGeregistreerdEvent
-    version: 1.0.0
----
-
-## Overview
-
-Service voor de integratie met het FormulierenLoket om aanvragen te verwerken. 
-
-<NodeGraph />
-
----
-id: LoketWebhookEndpoint
-name: LoketWebhookEndpoint
-version: 1.0.0
-summary: |
-  Service met webhooks voor het FormulierenLoket. Deze fungeert als producer bij nieuwe aanvragen vanuit het FormulierenLoket.
-
-sends:
-  - id: FormulierAanvraagKotlabelSubmittedEvent
-    version: 1.0.0
-
----
-
-## Overview
-
-Service met webhooks voor het FormulierenLoket. Deze fungeert als producer bij nieuwe aanvragen vanuit het FormulierenLoket.
-
-<NodeGraph />
-
----
-id: IntegrationProcessStatus
-name: IntegrationProcess Status
-version: 1.0.0
-summary: |
-  Service voor de integratie met DOSIS en NotificatieService
-
-
----
-
-## Overview
-
-Service voor de integratie met DOSIS en NotificatieService
-
-<NodeGraph />
-
----
-id: Aanvragen
-name: Aanvragen
-version: 1.0.0
-badges:
-  - content: new domain
-    backgroundColor: blue
-    textColor: blue
-    icon: RectangleGroupIcon
-
-services:
-  - id: AanvragenService
-  - id: IntegrationProcessFormulierenLoket
-  - id: IntegrationProcessStatus
-  - id: LoketWebhookService
----
-
-Het Aanvragen domein bevat services en events gerelateerd aan het beheer en de verwerking van aanvragen binnen het VLOK systeem.
-
-<NodeGraph />
-
----
 id: Core
 name: "VLOK Core"
 version: 1.0.0
@@ -3865,95 +3844,21 @@ Het VLOK Core domein bevat de kernservices en functionaliteiten die de basis vor
 <NodeGraph />
 
 ---
-id: BestemmingVoorAanvraagGeregistreerdSaga Flow
-name: Bestemming Voor Aanvraag Geregistreerd Saga Flow
+id: Aanvragen
+name: Aanvragen
 version: 1.0.0
-summary: Flow voor het verwerken van een aanvraag nadat een bestemming geregistreerd werd. Dit omvat het versturen van een ontvangstbevestiging notificatie, dosis dossier aanmaak en aanvraag documenten overnemen in VLOK.
-steps:
-  - id: "start_saga"
-    title: Start Saga
-    message:
-      id: BestemmingVoorAanvraagGeregistreerdEvent
-      version: 1.0.0
-    next_step:
-      id: "send_nieuwe_aanvraag_notificatie"
-      label: Send NieuweAanvraagNotificatieMessageEvent
 
-  - id: "send_nieuwe_aanvraag_notificatie"
-    title: Send NieuweAanvraagNotificatieMessageEvent
-    message:
-      id: NieuweAanvraagNotificatieMessageEvent
-      version: 1.0.0
-    next_step:
-      id: "wait_for_nieuwe_aanvraag_notificatie_response"
-      label: Wait for NieuweAanvraagNotificatieResponseEvent
-
-  - id: "wait_for_nieuwe_aanvraag_notificatie_response"
-    title: Wait for NieuweAanvraagNotificatieResponseEvent
-    message:
-      id: NieuweAanvraagNotificatieResponseEvent
-      version: 1.0.0
-    next_step:
-      id: "send_nieuwe_aanvraag_dosis_dossier"
-      label: Send NieuweAanvraagDosisDossierMessageEvent
-
-  - id: "send_nieuwe_aanvraag_dosis_dossier"
-    title: Send NieuweAanvraagDosisDossierMessageEvent
-    message:
-      id: NieuweAanvraagDosisDossierMessageEvent
-      version: 1.0.0
-    next_step:
-      id: "wait_for_nieuwe_aanvraag_dosis_dossier_response"
-      label: Wait for NieuweAanvraagDosisDossierResponseEvent
-
-  - id: "wait_for_nieuwe_aanvraag_dosis_dossier_response"
-    title: Wait for NieuweAanvraagDosisDossierResponseEvent
-    message:
-      id: NieuweAanvraagDosisDossierResponseEvent
-      version: 1.0.0
-    next_step:
-      id: "send_nieuwe_aanvraag_dosis_info"
-      label: Send NieuweAanvraagDosisInfoMessageEvent
-
-  - id: "send_nieuwe_aanvraag_dosis_info"
-    title: Send NieuweAanvraagDosisInfoMessageEvent
-    message:
-      id: NieuweAanvraagDosisInfoMessageEvent
-      version: 1.0.0
-    next_step:
-      id: "wait_for_nieuwe_aanvraag_dosis_info_response"
-      label: Wait for NieuweAanvraagDosisInfoResponseEvent
-
-  - id: "wait_for_nieuwe_aanvraag_dosis_info_response"
-    title: Wait for NieuweAanvraagDosisInfoResponseEvent
-    message:
-      id: NieuweAanvraagDosisInfoResponseEvent
-      version: 1.0.0
-    next_step:
-      id: "complete_saga"
-      label: Complete Saga
-
-  - id: "complete_saga" 
-    title: Complete Saga
+services:
+  - id: AanvragenService
+  - id: IntegrationProcessFormulierenLoket
+  - id: IntegrationProcessStatus
+  - id: LoketWebhookService
 ---
 
-### Flow of feature
-<NodeGraph/>
- 
-## Flow description
+Het Aanvragen domein bevat services en events gerelateerd aan het beheer en de verwerking van aanvragen binnen het VLOK systeem.
 
-Deze flow beschrijft de verwerking die plaatsvindt nadat een `BestemmingVoorAanvraagGeregistreerdEvent` is ontvangen. De flow coördineert verschillende stappen, waaronder het verzenden van notificaties, het aanmaken van een dossier in Dosis, en het uploaden van aanvraagdocumenten. Elke stap wacht op een bevestiging voordat de volgende stap wordt uitgevoerd, wat zorgt voor een betrouwbare en traceerbare verwerking van de aanvraagbestemming registratie.
-- **Trigger:** `BestemmingVoorAanvraagGeregistreerdEvent` (gepubliceerd door `AanvragenService`)
-- **Stap 1:** Verzenden van een `NieuweAanvraagNotificatieMessageEvent` om de aanvrager te informeren over de registratie van de bestemming.
-- **Stap 2:** Aanmaak van een dossier in Dosis via een `NieuweAanvraagDosisDossierMessageEvent`.
-- **Stap 3:** Uploaden van aanvullende informatie naar Dosis met een `NieuweAanvraagDosisInfoMessageEvent`.
+<NodeGraph />
 
-
-## Linked artefacts
-- Event: [BestemmingVoorAanvraagGeregistreerdEvent](../../services/AanvragenService/events/BestemmingVoorAanvraagGeregistreerdEvent/)
-- Event: [NieuweAanvraagNotificatieMessageEvent](../../services/AanvragenService/events/NieuweAanvraagNotificatieMessageEvent/)
-- Event: [NieuweAanvraagDosisDossierMessageEvent](../../services/AanvragenService/events/NieuweAanvraagDosisDossierMessageEvent/)
-- Service: [AanvragenService](../../services/AanvragenService/)
 ---
 id: NieuweAanvraagKotlabelSubmittedFlow
 name: Nieuw aanvraag formulier ontvangen
@@ -4050,3 +3955,93 @@ Deze flow beschrijft de verwerking van een ingediend kotlabel aanvraagformulier 
 - Command: [RegistreerAanvraagKotlabelApiRequest](services/AanvragenService/commands/RegistreerAanvraagKotlabelApiRequest/index.mdx)
 - Nieuwe aanvraag event: [NieuweAanvraagGeregistreerdEvent](services/AanvragenService/events/NieuweAanvraagGeregistreerdEvent/index.mdx)
 - Bestemming event: [BestemmingVoorAanvraagGeregistreerdEvent](services/AanvragenService/events/BestemmingVoorAanvraagGeregistreerdEvent/index.mdx)
+---
+id: BestemmingVoorAanvraagGeregistreerdSaga Flow
+name: Bestemming Voor Aanvraag Geregistreerd Saga Flow
+version: 1.0.0
+summary: Flow voor het verwerken van een aanvraag nadat een bestemming geregistreerd werd. Dit omvat het versturen van een ontvangstbevestiging notificatie, dosis dossier aanmaak en aanvraag documenten overnemen in VLOK.
+steps:
+  - id: "start_saga"
+    title: Start Saga
+    message:
+      id: BestemmingVoorAanvraagGeregistreerdEvent
+      version: 1.0.0
+    next_step:
+      id: "send_nieuwe_aanvraag_notificatie"
+      label: Send NieuweAanvraagNotificatieMessageEvent
+
+  - id: "send_nieuwe_aanvraag_notificatie"
+    title: Send NieuweAanvraagNotificatieMessageEvent
+    message:
+      id: NieuweAanvraagNotificatieMessageEvent
+      version: 1.0.0
+    next_step:
+      id: "wait_for_nieuwe_aanvraag_notificatie_response"
+      label: Wait for NieuweAanvraagNotificatieResponseEvent
+
+  - id: "wait_for_nieuwe_aanvraag_notificatie_response"
+    title: Wait for NieuweAanvraagNotificatieResponseEvent
+    message:
+      id: NieuweAanvraagNotificatieResponseEvent
+      version: 1.0.0
+    next_step:
+      id: "send_nieuwe_aanvraag_dosis_dossier"
+      label: Send NieuweAanvraagDosisDossierMessageEvent
+
+  - id: "send_nieuwe_aanvraag_dosis_dossier"
+    title: Send NieuweAanvraagDosisDossierMessageEvent
+    message:
+      id: NieuweAanvraagDosisDossierMessageEvent
+      version: 1.0.0
+    next_step:
+      id: "wait_for_nieuwe_aanvraag_dosis_dossier_response"
+      label: Wait for NieuweAanvraagDosisDossierResponseEvent
+
+  - id: "wait_for_nieuwe_aanvraag_dosis_dossier_response"
+    title: Wait for NieuweAanvraagDosisDossierResponseEvent
+    message:
+      id: NieuweAanvraagDosisDossierResponseEvent
+      version: 1.0.0
+    next_step:
+      id: "send_nieuwe_aanvraag_dosis_info"
+      label: Send NieuweAanvraagDosisInfoMessageEvent
+
+  - id: "send_nieuwe_aanvraag_dosis_info"
+    title: Send NieuweAanvraagDosisInfoMessageEvent
+    message:
+      id: NieuweAanvraagDosisInfoMessageEvent
+      version: 1.0.0
+    next_step:
+      id: "wait_for_nieuwe_aanvraag_dosis_info_response"
+      label: Wait for NieuweAanvraagDosisInfoResponseEvent
+
+  - id: "wait_for_nieuwe_aanvraag_dosis_info_response"
+    title: Wait for NieuweAanvraagDosisInfoResponseEvent
+    message:
+      id: NieuweAanvraagDosisInfoResponseEvent
+      version: 1.0.0
+    next_step:
+      id: "complete_saga"
+      label: Complete Saga
+
+  - id: "complete_saga" 
+    title: Complete Saga
+---
+
+### Flow of feature
+<NodeGraph/>
+ 
+## Flow description
+
+Deze flow beschrijft de verwerking die plaatsvindt nadat een `BestemmingVoorAanvraagGeregistreerdEvent` is ontvangen. De flow coördineert verschillende stappen, waaronder het verzenden van notificaties, het aanmaken van een dossier in Dosis, en het uploaden van aanvraagdocumenten. Elke stap wacht op een bevestiging voordat de volgende stap wordt uitgevoerd, wat zorgt voor een betrouwbare en traceerbare verwerking van de aanvraagbestemming registratie.
+- **Trigger:** `BestemmingVoorAanvraagGeregistreerdEvent` (gepubliceerd door `AanvragenService`)
+- **Stap 1:** Verzenden van een `NieuweAanvraagNotificatieMessageEvent` om de aanvrager te informeren over de registratie van de bestemming.
+- **Stap 2:** Aanmaak van een dossier in Dosis via een `NieuweAanvraagDosisDossierMessageEvent`.
+- **Stap 3:** Uploaden van aanvullende informatie naar Dosis met een `NieuweAanvraagDosisInfoMessageEvent`.
+
+
+## Linked artefacts
+- Event: [BestemmingVoorAanvraagGeregistreerdEvent](../../services/AanvragenService/events/BestemmingVoorAanvraagGeregistreerdEvent/)
+- Event: [NieuweAanvraagNotificatieMessageEvent](../../services/AanvragenService/events/NieuweAanvraagNotificatieMessageEvent/)
+- Event: [NieuweAanvraagDosisDossierMessageEvent](../../services/AanvragenService/events/NieuweAanvraagDosisDossierMessageEvent/)
+- Service: [AanvragenService](../../services/AanvragenService/)
