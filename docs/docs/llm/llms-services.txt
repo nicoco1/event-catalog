@@ -1,0 +1,70 @@
+# Services
+
+## [AanvragenService - 1.0.0](https://eventcatalog.dev/docs/services/AanvragenService/1.0.0.mdx)
+
+Service voor het beheren van aanvragen
+
+### Sends
+- [Nieuwe Aanvraag Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - 
+- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - 
+
+### Receives
+- [Registreer Aanvraag Kotlabel - 1.0.0](https://eventcatalog.dev/docs/events/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - 
+- [Upload Document Request - 1.0.0](https://eventcatalog.dev/docs/events/UploadDocumentRequest/1.0.0.mdx) - 
+- [Nieuwe Aanvraag Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - 
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
+
+## [IntegrationProcess FormulierenLoket - 1.0.0](https://eventcatalog.dev/docs/services/IntegrationProcessFormulierenLoket/1.0.0.mdx)
+
+Service voor de integratie met het FormulierenLoket om aanvragen te verwerken
+
+### Sends
+- [Registreer Aanvraag Kotlabel - 1.0.0](https://eventcatalog.dev/docs/events/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - 
+- [Upload Document Request - 1.0.0](https://eventcatalog.dev/docs/events/UploadDocumentRequest/1.0.0.mdx) - 
+
+### Receives
+- [Formulier Aanvraag Kotlabel Submitted - 1.0.0](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - 
+- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - 
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
+
+## [IntegrationProcess Status - 1.0.0](https://eventcatalog.dev/docs/services/IntegrationProcessStatus/1.0.0.mdx)
+
+Service voor de integratie met DOSIS en NotificatieService
+
+### Sends
+- Does not send any messages
+
+### Receives
+- Does not receive any messages
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
+
+## [LoketWebhookEndpoint - 1.0.0](https://eventcatalog.dev/docs/services/LoketWebhookEndpoint/1.0.0.mdx)
+
+Service met webhooks voor het FormulierenLoket. Deze fungeert als producer bij nieuwe aanvragen vanuit het FormulierenLoket.
+
+### Sends
+- [Formulier Aanvraag Kotlabel Submitted - 1.0.0](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - 
+
+### Receives
+- Does not receive any messages
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
