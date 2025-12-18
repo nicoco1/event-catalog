@@ -16,9 +16,8 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm ci || npm install
-      - run: npm run build
-      - run: npm run build
+      - run: npm install
+      - run: CI=true npm run build
 
       - run: git status
       - run: git config user.name "github-actions"
