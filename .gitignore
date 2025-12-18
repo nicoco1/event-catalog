@@ -5,6 +5,7 @@
 # Generated EventCatalog output
 .eventcatalog
 .eventcatalog-cache
+.eventcatalog-core
 eventcatalog.build
 eventcatalog.dist
 eventcatalog.out
