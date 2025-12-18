@@ -1,1 +1,0 @@
-import{F as o}from"./EnvelopeIcon.CURY145Q.js";import{F as e,b as a,c,a as s}from"./ServerIcon.LgKSWxXk.js";const l=r=>{switch(r){case"events":return{color:"orange",Icon:s};case"commands":return{color:"blue",Icon:c};case"queries":return{color:"green",Icon:a};case"services":return{color:"pink",Icon:e};default:return{color:"gray",Icon:o}}};export{l as g};

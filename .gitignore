@@ -14,6 +14,7 @@ eventcatalog.out
 dist/
 build/
 public/
+docs/
 
 ############################################
 # Node.js
