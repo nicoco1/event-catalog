@@ -1,4 +1,4 @@
-name: Build EventCatalog
+name: Build & Deploy EventCatalog
 
 on:
   push:
@@ -8,27 +8,35 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - run: npm install
-      - run: npm install @parcel/watcher-linux-x64-glibc
-      - run: npm install @rollup/rollup-linux-x64-gnu
-      - run: npm run build
+      # Use npm OR pnpm (pnpm recommended for v3)
+      - name: Install dependencies
+        run: npm install
 
-      - run: git status
-      - run: git config user.name "github-actions"
-      - run: git config user.email "github-actions@github.com"
+      # Native deps required by EventCatalog v3 beta
+      - name: Install native deps
+        run: |
+          npm install @parcel/watcher-linux-x64-glibc
+          npm install @rollup/rollup-linux-x64-gnu
 
-      - run: |
-          git add docs
-          git commit -m "Update EventCatalog" || exit 0
-          git push
+      - name: Build EventCatalog
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./docs
+          force_orphan: true
