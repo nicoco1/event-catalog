@@ -1,0 +1,107 @@
+# Services
+
+## [AanvragenService - 1.0.0](https://eventcatalog.dev/docs/services/AanvragenService/1.0.0.mdx)
+
+Service voor het beheren van aanvragen
+
+### Sends
+- [Nieuwe Aanvraag Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - Wordt getriggerd wanneer een nieuwe aanvraag (zonder bestemming) is geregistreerd in de aanvragenservice.
+- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - wordt getriggerd wanneer een bestemming is geregistreerd voor een aanvraag.
+- [Nieuwe Aanvraag Notificatie Initiated - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagNotificatieMessageEvent/1.0.0.mdx) - Event dat wordt verzonden om een notificatie te versturen bij een nieuwe aanvraag. Dit is de ontvangstbevestiging voor de aanvrager (NieuweAanvraagNotificatieMessageEvent).
+- [Nieuwe Aanvraag Dosis Dossier Initiated - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagDosisDossierMessageEvent/1.0.0.mdx) - Event dat wordt verzonden om een dosis dossier aan te maken bij een nieuwe aanvraag (NieuweAanvraagDosisDossierMessageEvent).
+- [Dosis Dossier Created - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagDosisInfoMessageEvent/1.0.0.mdx) - Event dat wordt verzonden om dosis info zoals dosis dossier referte op de aanvraag bij te houden (NieuweAanvraagDosisInfoMessageEvent).
+
+### Receives
+- [Registreer Aanvraag Kotlabel - 1.0.0](https://eventcatalog.dev/docs/events/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - Maakt een nieuwe kotlabel aanvraag aan in de aanvragenservice.
+- [Nieuwe Aanvraag Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagGeregistreerdEvent/1.0.0.mdx) - Wordt getriggerd wanneer een nieuwe aanvraag (zonder bestemming) is geregistreerd in de aanvragenservice.
+- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - wordt getriggerd wanneer een bestemming is geregistreerd voor een aanvraag.
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
+
+## [IntegrationProcess FormulierenLoket - 1.0.0](https://eventcatalog.dev/docs/services/IntegrationProcessFormulierenLoket/1.0.0.mdx)
+
+Service voor de integratie met het FormulierenLoket om aanvragen te verwerken
+
+### Sends
+- [Registreer Aanvraag Kotlabel - 1.0.0](https://eventcatalog.dev/docs/events/RegistreerAanvraagKotlabelApiRequest/1.0.0.mdx) - Maakt een nieuwe kotlabel aanvraag aan in de aanvragenservice.
+- [Upload Document Request - 1.0.0](https://eventcatalog.dev/docs/events/UploadDocumentRequest/1.0.0.mdx) - Upload aanvraag bijlage van het FormulierenLoket naar VLOK als document.
+
+### Receives
+- [Formulier Aanvraag Kotlabel Submitted - 1.0.0](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - Wordt getriggerd wanneer een gebruiker een kotlabel aanvraag indient via het FormulierenLoket.
+- [Bestemming Geregistreerd - 1.0.0](https://eventcatalog.dev/docs/events/BestemmingVoorAanvraagGeregistreerdEvent/1.0.0.mdx) - wordt getriggerd wanneer een bestemming is geregistreerd voor een aanvraag.
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
+
+## [IntegrationProcess Status - 1.0.0](https://eventcatalog.dev/docs/services/IntegrationProcessStatus/1.0.0.mdx)
+
+Service voor de integratie met DOSIS en NotificatieService.
+
+### Sends
+- Does not send any messages
+
+### Receives
+- [Nieuwe Aanvraag Notificatie Initiated - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagNotificatieMessageEvent/1.0.0.mdx) - Event dat wordt verzonden om een notificatie te versturen bij een nieuwe aanvraag. Dit is de ontvangstbevestiging voor de aanvrager (NieuweAanvraagNotificatieMessageEvent).
+- [Nieuwe Aanvraag Dosis Dossier Initiated - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagDosisDossierMessageEvent/1.0.0.mdx) - Event dat wordt verzonden om een dosis dossier aan te maken bij een nieuwe aanvraag (NieuweAanvraagDosisDossierMessageEvent).
+- [Dosis Dossier Created - 1.0.0](https://eventcatalog.dev/docs/events/NieuweAanvraagDosisInfoMessageEvent/1.0.0.mdx) - Event dat wordt verzonden om dosis info zoals dosis dossier referte op de aanvraag bij te houden (NieuweAanvraagDosisInfoMessageEvent).
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
+
+## [Loket Webhook Endpoint - 1.0.0](https://eventcatalog.dev/docs/services/LoketWebhookEndpoint/1.0.0.mdx)
+
+Service met webhooks voor het FormulierenLoket. Deze fungeert als producer bij nieuwe aanvragen vanuit het FormulierenLoket.
+
+### Sends
+- [Formulier Aanvraag Kotlabel Submitted - 1.0.0](https://eventcatalog.dev/docs/events/FormulierAanvraagKotlabelSubmittedEvent/1.0.0.mdx) - Wordt getriggerd wanneer een gebruiker een kotlabel aanvraag indient via het FormulierenLoket.
+
+### Receives
+- Does not receive any messages
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
+
+## [VLOK Documenten Module - 1.0.0](https://eventcatalog.dev/docs/services/DocumentenModuleService/1.0.0.mdx)
+
+Documenten module service voor VLOK.
+
+### Sends
+- Does not send any messages
+
+### Receives
+- Does not receive any messages
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers
+
+## [VLOK REST API - 1.0.0](https://eventcatalog.dev/docs/services/RestApiService/1.0.0.mdx)
+
+REST API service voor VLOK.
+
+### Sends
+- Does not send any messages
+
+### Receives
+- [Upload Document Request - 1.0.0](https://eventcatalog.dev/docs/events/UploadDocumentRequest/1.0.0.mdx) - Upload aanvraag bijlage van het FormulierenLoket naar VLOK als document.
+
+### Writes to
+- Does not write to any containers
+
+### Reads from
+- Does not read from any containers

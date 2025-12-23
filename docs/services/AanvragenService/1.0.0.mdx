@@ -1,0 +1,3679 @@
+---
+id: AanvragenService
+name: AanvragenService
+version: 1.0.0
+summary: |
+  Service voor het beheren van aanvragen
+
+receives:
+  - id: RegistreerAanvraagKotlabelApiRequest
+    version: 1.0.0
+  - id: NieuweAanvraagGeregistreerdEvent
+    version: 1.0.0
+  - id: BestemmingVoorAanvraagGeregistreerdEvent
+    version: 1.0.0
+
+sends:
+  - id: NieuweAanvraagGeregistreerdEvent
+    version: 1.0.0
+  - id: BestemmingVoorAanvraagGeregistreerdEvent
+    version: 1.0.0
+  - id: NieuweAanvraagNotificatieMessageEvent
+    version: 1.0.0
+  - id: NieuweAanvraagDosisDossierMessageEvent
+    version: 1.0.0
+  - id: NieuweAanvraagDosisInfoMessageEvent
+    version: 1.0.0
+
+specifications:
+  - type: openapi
+    path: aanvragenOpenApi.json
+    name: OpenAPI Specification
+---
+
+## Overview
+
+De AanvragenService is een microservice die verantwoordelijk is voor het beheren van aanvragen. 
+Deze service is daarnaast ook verantwoordelijk voor het orkestreren van integraties met het formulierenloket en Dosis.
+
+<NodeGraph />
+
+
+ ## Raw Schema:aanvragenOpenApi.json
+
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "VLOK - Aanvragen API",
+    "version": "v1"
+  },
+  "paths": {
+    "/aanvragen/{aanvraagReferte}": {
+      "get": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Ophalen van een aanvraag",
+        "description": "Ophalen van een aanvraag op basis van referte",
+        "operationId": "GetAanvraagDetail",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAanvraagResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Gedeeltelijke aanpassing van een aanvraag",
+        "description": "Wijzig beperkte velden van een aanvraag",
+        "operationId": "PartiallyUpdatedAanvraag",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AanvraagUpdateDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "412": {
+            "description": "Precondition Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VlokProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aanvragen/toegekendAan": {
+      "get": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Ophalen van een lijst van gebruikers",
+        "description": "Ophalen van lijst van gebruiker door te filteren op niscodes van de bestemde gemeentes of extern dossier ID of een combinatie van de twee",
+        "operationId": "SearchUniqueToegekendAan",
+        "parameters": [
+          {
+            "name": "bestemming",
+            "in": "query",
+            "description": "Filter op de niscode of organisatietype van de toegewezen bestemming",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetToegekendAanDataResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/refertes": {
+      "get": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Ophalen van een lijst van refertes",
+        "description": "Ophalen van lijst van refertes door te filteren op niscodes van de bestemde gemeentes of extern dossier ID of een combinatie van de twee",
+        "operationId": "SearchUniqueRefertes",
+        "parameters": [
+          {
+            "name": "bestemming",
+            "in": "query",
+            "description": "Filter op de niscode of organisatietype van de toegewezen bestemming",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "referte",
+            "in": "query",
+            "description": "Filter op de referte of bevat een deel van de referte",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRefertesDataResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/externeRefertes": {
+      "get": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Ophalen van een lijst van externe refertes",
+        "description": "Ophalen van lijst van externe refeters door te filteren op niscodes van de bestemde gemeentes of extern dossier ID of een combinatie van de twee",
+        "operationId": "SearchUniqueExterneRefertes",
+        "parameters": [
+          {
+            "name": "bestemming",
+            "in": "query",
+            "description": "Filter op de niscode of organisatietype van de toegewezen bestemming",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "externeReferte",
+            "in": "query",
+            "description": "Filter op de externe referte of bevat een deel van de externe referte",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetExterneRefertesDataResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen": {
+      "get": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Ophalen van een lijst van aanvragen",
+        "description": "Ophalen van lijst van aanvragen door te filteren op niscodes van de bestemde gemeentes of extern dossier ID of een combinatie van de twee",
+        "operationId": "SearchAanvragen",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filter op het type van de aanvraag",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/AanvraagType"
+              }
+            }
+          },
+          {
+            "name": "niscode",
+            "in": "query",
+            "description": "Filter op de niscode van het goed waarvoor de aanvraag werd ingediend",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "postcode",
+            "in": "query",
+            "description": "Filter op de postcode van het goed waarvoor de aanvraag werd ingediend",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "toegekendAan",
+            "in": "query",
+            "description": "Filter op de toegekende gebruiker van de aanvraag",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "emptyToegekendAan",
+            "in": "query",
+            "description": "Filter op de toegekende gebruiker van de aanvraag dat deze niet is ingevuld",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "bestemming",
+            "in": "query",
+            "description": "Filter op de niscode of organisatietype van de toegewezen bestemming",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter op de status van de aanvraag",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/AanvraagStatusType"
+              }
+            }
+          },
+          {
+            "name": "aanvragerIdentificatie",
+            "in": "query",
+            "description": "Filter op kbonummer of rijksregisternummer van de aanvrager",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "dossierId",
+            "in": "query",
+            "description": "Filter op de externe referte (skryv id)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "referte",
+            "in": "query",
+            "description": "Filter op de referte van de aanvraag",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "externeReferte",
+            "in": "query",
+            "description": "Filter op de externe referte van de aanvraag",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "aanvraagDatumVan",
+            "in": "query",
+            "description": "Filter de aanvragen op datum vanaf",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "aanvraagDatumTot",
+            "in": "query",
+            "description": "Filter de aanvragen op datum tot",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "antwoordDatumVan",
+            "in": "query",
+            "description": "Filter de aanvragen op datum antwoord vanaf van de laatste gestelde vraag",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "emptyBestemming",
+            "in": "query",
+            "description": "Filter de aanvragen waarvan de bestemming niet ingevuld is",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAanvragenResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/extrainfo/{id}": {
+      "get": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Ophalen van een extra info",
+        "description": "Ophalen van een extra info op basis van aanvraag referte en extra info id",
+        "operationId": "GetExtraInfoDetail",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetExtraInfoResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/query": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Query uitvoeren op aanvragen set",
+        "description": "Voer een voorgedefinieerde, complexe query uit op de aanvragenset",
+        "operationId": "QueryAanvragen",
+        "parameters": [
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/OpenAanvragenVoorAdresQueryRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/NieuweNietToegekendeOfBeantwoordeAanvragenQueryRequest"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAanvragenResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/conformiteitsattest": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Registreren van een aanvraag CA",
+        "description": "Registreren van een aanvraag CA in de aanvraagmodule zonder bestemming",
+        "operationId": "RegistreerAanvraagConformiteitsattest",
+        "parameters": [
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAanvraagCaDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/aanvragen/kotlabel": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Registreren van een aanvraag Kotlabel",
+        "description": "Registreren van een aanvraag Kotlabel in de aanvraagmodule zonder bestemming",
+        "operationId": "RegistreerAanvraagKotlabel",
+        "parameters": [
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAanvraagKotlabelDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/bestand/{skryvAttachmentId}": {
+      "patch": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Gedeeltelijke aanpassing van een aanvraag",
+        "description": "Wijzig beperkte velden van een aanvraag",
+        "operationId": "LinkBestandToVlokDocument",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skryvAttachmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BestandPatchDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "412": {
+            "description": "Precondition Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VlokProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/stopzetten": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Stopzetten van een aanvraag",
+        "description": "Stopzetten van een aanvraag kotlabel",
+        "operationId": "AanvraagStopzetten",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AanvraagStopzettenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/afronden": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Afronden van een aanvraag",
+        "description": "Afronden van een aanvraag kotlabel",
+        "operationId": "AanvraagAfronden",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AanvraagAfrondenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/starten": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Starten van een aanvraag",
+        "description": "Starten van een aanvraag kotlabel",
+        "operationId": "AanvraagStarten",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AanvraagStartenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/ontkoppelen": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Ontkoppelen van een aanvraag",
+        "description": "Ontkoppelen van een aanvraag kotlabel",
+        "operationId": "AanvraagOntkoppelen",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AanvraagOntkoppelenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/beoordeeld": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Beoordelen van een sub aanvragen",
+        "description": "Beoordelen van sub aanvragen kotlabel",
+        "operationId": "SubAanvragenBeoordeeld",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubAanvragenBeoordeeldDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/subAanvragenStopzetten": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Sub aanvragen stopzetten, met bepaalde reden stopzetting",
+        "description": "Sub aanvragen stopzetten, met bepaalde reden stopzetting",
+        "operationId": "SubAanvragenStopzetten",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubAanvragenStopzettenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/vraag": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Vraag toevoegen aan aanvraag",
+        "description": "Toevoegen van een vraag aan de aanvraag",
+        "operationId": "RegistreerVraag",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistreerVraagDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VlokProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/vraag/{extraInfoId}/antwoord": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Antwoord toevoegen aan vraag",
+        "description": "Toevoegen van een antwoord aan de vraag",
+        "operationId": "RegistreerAntwoord",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "extraInfoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistreerAntwoordDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/vraag/{extraInfoId}/annuleer": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Vraag annuleren",
+        "description": "Het annuleren van een vraag",
+        "operationId": "VraagAnnuleren",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "extraInfoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnnuleerVraagDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/contactgegevens": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Updaten contact gegevens",
+        "description": "Updaten van de details van de verzoeker",
+        "operationId": "UpdateContactgegevens",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactgegevensDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/communicatie": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Communicatie log toevoegen",
+        "description": "Toevoegen van communicatie log",
+        "operationId": "RegistreerCommunicatie",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistreerCommunicatieDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "communicatie log opvragen",
+        "description": "Ophalen van communicatie logs van een aanvraag met bijhorende subaanvragen",
+        "operationId": "GetCommunicatieLogs",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCommunicatieLogsResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/conformiteitsattest/{aanvraagReferte}/aanvraagvolledig": {
+      "post": {
+        "tags": [
+          "Aanvraag"
+        ],
+        "summary": "Aanvraag CA volledig zetten",
+        "description": "Volledig zetten van een aanvraag CA",
+        "operationId": "AanvraagCaVolledigZetten",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AanvraagCaVolledigZettenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Healthcheck"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthReportDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthReportDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/token": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTokenResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/subaanvragen": {
+      "get": {
+        "tags": [
+          "SubAanvraag"
+        ],
+        "summary": "Ophalen van subaanvragen van een aanvraag",
+        "description": "Ophalen van alle subaanvragen die gekoppeld zijn aan een aanvraag",
+        "operationId": "GetSubAanvragen",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSubAanvragenResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/subaanvragen/{subAanvraagReferte}": {
+      "get": {
+        "tags": [
+          "SubAanvraag"
+        ],
+        "summary": "Ophalen van een subaanvraag",
+        "description": "Ophalen van een subaanvraag op basis van de referte en aanvraagreferte",
+        "operationId": "GetSubAanvraagDetail",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subAanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSubAanvraagResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/subAanvraag/beoordeeld": {
+      "post": {
+        "tags": [
+          "SubAanvraag"
+        ],
+        "summary": "Beoordelen van een sub aanvraag",
+        "description": "Beoordelen van een sub aanvraag kotlabel",
+        "operationId": "SubAanvraagBeoordeeld",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubAanvraagBeoordeeldDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/aanvragen/{aanvraagReferte}/subAanvraag/teBeoordelen": {
+      "post": {
+        "tags": [
+          "SubAanvraag"
+        ],
+        "summary": "Sub aanvraag op te beoordelen zetten",
+        "description": "Sub aanvraag kotlabel op te beoordelen zetten",
+        "operationId": "SubAanvraagTeBeoordelen",
+        "parameters": [
+          {
+            "name": "aanvraagReferte",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "description": "The correlation ID of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubAanvraagTeBeoordelenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AanvraagAfrondenDto": {
+        "required": [
+          "datumAfgerond"
+        ],
+        "type": "object",
+        "properties": {
+          "datumAfgerond": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AanvraagCaVolledigZettenDto": {
+        "required": [
+          "datumVolledig",
+          "deadlineBeslissing",
+          "wonenInVlaanderenPostAdres"
+        ],
+        "type": "object",
+        "properties": {
+          "datumVolledig": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deadlineBeslissing": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "wonenInVlaanderenPostAdres": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AanvraagDetailDto": {
+        "required": [
+          "aanvraagType",
+          "adres",
+          "bestemming",
+          "bijlagen",
+          "datumAanvraag",
+          "details",
+          "extern",
+          "extraInfo",
+          "gebouw",
+          "nisCode",
+          "oorsprong",
+          "referte",
+          "status",
+          "statusList",
+          "verzoeker",
+          "woningGoederen"
+        ],
+        "type": "object",
+        "properties": {
+          "referte": {
+            "type": "string"
+          },
+          "adres": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AanvraagStatusDto"
+          },
+          "datumAanvraag": {
+            "type": "string",
+            "format": "date"
+          },
+          "aanvraagType": {
+            "$ref": "#/components/schemas/AanvraagType"
+          },
+          "bestemming": {
+            "$ref": "#/components/schemas/BestemmingDto"
+          },
+          "extern": {
+            "$ref": "#/components/schemas/ExterneInfoDto"
+          },
+          "nisCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "details": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DetailCaDto"
+              },
+              {
+                "$ref": "#/components/schemas/DetailKotlabelDto"
+              }
+            ]
+          },
+          "oorsprong": {
+            "$ref": "#/components/schemas/Oorsprong"
+          },
+          "toegekendeRolId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "toegekendeGebruikerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "verzoeker": {
+            "$ref": "#/components/schemas/VerzoekerAanvraagDto"
+          },
+          "gebouw": {
+            "$ref": "#/components/schemas/GebouwDto"
+          },
+          "woningGoederen": {
+            "$ref": "#/components/schemas/WoningGoederenDto"
+          },
+          "bijlagen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BijlageDto"
+            }
+          },
+          "statusList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AanvraagStatusDto"
+            }
+          },
+          "extraInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtraInfoDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AanvraagListItemDto": {
+        "required": [
+          "aanvraagType",
+          "adres",
+          "bestemming",
+          "datumAanvraag",
+          "extern",
+          "referte",
+          "status",
+          "verzoekerAanvraag"
+        ],
+        "type": "object",
+        "properties": {
+          "referte": {
+            "type": "string"
+          },
+          "adres": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AanvraagStatusDto"
+          },
+          "datumAanvraag": {
+            "type": "string",
+            "format": "date"
+          },
+          "aanvraagType": {
+            "$ref": "#/components/schemas/AanvraagType"
+          },
+          "bestemming": {
+            "$ref": "#/components/schemas/BestemmingDto"
+          },
+          "extern": {
+            "$ref": "#/components/schemas/ExterneInfoDto"
+          },
+          "toegekendeGebruikerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "adresRegisterIdentifiers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "gebouwId": {
+            "type": "string",
+            "nullable": true
+          },
+          "gebouwEenheidIdentifiers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "verzoekerAanvraag": {
+            "$ref": "#/components/schemas/VerzoekerAanvraagListItemDto"
+          },
+          "recentsteExtraInfo": {
+            "$ref": "#/components/schemas/ExtraInfoDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AanvraagOntkoppelenDto": {
+        "required": [
+          "datumOntkoppelen"
+        ],
+        "type": "object",
+        "properties": {
+          "datumOntkoppelen": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AanvraagStartenDto": {
+        "required": [
+          "datumGestart"
+        ],
+        "type": "object",
+        "properties": {
+          "datumGestart": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AanvraagStatusDto": {
+        "required": [
+          "datum",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/AanvraagStatusType"
+          },
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reden": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AanvraagStatusType": {
+        "enum": [
+          "Nieuw",
+          "ProcedureGestart",
+          "Afgerond",
+          "Gesloten"
+        ],
+        "type": "string"
+      },
+      "AanvraagStopzettenDto": {
+        "required": [
+          "datumStopzetting",
+          "redenStopzetting"
+        ],
+        "type": "object",
+        "properties": {
+          "datumStopzetting": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "redenStopzetting": {
+            "$ref": "#/components/schemas/RedenStopzetting"
+          },
+          "extraInfoStopzetting": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AanvraagType": {
+        "enum": [
+          "Conformiteitsattest",
+          "Kotlabel"
+        ],
+        "type": "string"
+      },
+      "AanvraagUpdateDto": {
+        "type": "object",
+        "properties": {
+          "toegekendeGebruikerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdresDto": {
+        "required": [
+          "gemeente",
+          "huisnummer",
+          "postcode",
+          "straat"
+        ],
+        "type": "object",
+        "properties": {
+          "postcode": {
+            "maxLength": 4,
+            "type": "string"
+          },
+          "gemeente": {
+            "$ref": "#/components/schemas/GemeenteDto"
+          },
+          "straat": {
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "huisnummer": {
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "busnummer": {
+            "maxLength": 1024,
+            "type": "string",
+            "nullable": true
+          },
+          "adresObjectId": {
+            "maxLength": 1024,
+            "type": "string",
+            "nullable": true
+          },
+          "gebouwId": {
+            "type": "string",
+            "nullable": true
+          },
+          "gebouwEenheidId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AnnuleerVraagDto": {
+        "required": [
+          "datumAnnulatie",
+          "redenAnnulatie"
+        ],
+        "type": "object",
+        "properties": {
+          "datumAnnulatie": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "redenAnnulatie": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AntwoordDetailDto": {
+        "required": [
+          "datum"
+        ],
+        "type": "object",
+        "properties": {
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inhoud": {
+            "type": "string",
+            "nullable": true
+          },
+          "bestanden": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BestandsInfoDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AntwoordDto": {
+        "required": [
+          "datum"
+        ],
+        "type": "object",
+        "properties": {
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BestandPatchDto": {
+        "required": [
+          "vlokReferte"
+        ],
+        "type": "object",
+        "properties": {
+          "vlokReferte": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BestandsInfoDto": {
+        "required": [
+          "bestandsgrootte",
+          "bestandsnaam",
+          "mimeType",
+          "skryvAttachmentId",
+          "vlokReferte"
+        ],
+        "type": "object",
+        "properties": {
+          "mimeType": {
+            "$ref": "#/components/schemas/MimeType"
+          },
+          "bestandsnaam": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "bestandsgrootte": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "skryvAttachmentId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "vlokReferte": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BestemmingDto": {
+        "required": [
+          "code",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/BestemmingType"
+          },
+          "code": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BestemmingType": {
+        "enum": [
+          "Gemeente",
+          "OverheidsInstelling",
+          "PrivateInstelling"
+        ],
+        "type": "string"
+      },
+      "BijlageDto": {
+        "required": [
+          "bestanden",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/BijlageType"
+          },
+          "omschrijving": {
+            "maxLength": 1024,
+            "type": "string",
+            "nullable": true
+          },
+          "bestanden": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BestandsInfoDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "BijlageType": {
+        "enum": [
+          "SchetsWoning",
+          "Brandweerverslag",
+          "KeuringsattestElektriciteit",
+          "KeuringsattestGas",
+          "KeuringsattestCV",
+          "BewijsMandaatVerhuurder",
+          "EpcAttest",
+          "Andere"
+        ],
+        "type": "string"
+      },
+      "CommunicatieBestemming": {
+        "enum": [
+          "Mail",
+          "Dosis",
+          "Formulierenloket"
+        ],
+        "type": "string"
+      },
+      "CommunicatieDto": {
+        "required": [
+          "aanvraagReferte",
+          "logs"
+        ],
+        "type": "object",
+        "properties": {
+          "aanvraagReferte": {
+            "type": "string"
+          },
+          "logs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommunicatieLogDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommunicatieLogDto": {
+        "required": [
+          "bestemming",
+          "datum",
+          "inhoud"
+        ],
+        "type": "object",
+        "properties": {
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kboNummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "rijksregisterNummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "bestemming": {
+            "$ref": "#/components/schemas/CommunicatieBestemming"
+          },
+          "inhoud": {
+            "type": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "subAanvraagReferte": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/CommunicatieLogMetadataDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommunicatieLogMetadataDto": {
+        "type": "object",
+        "properties": {
+          "vlokDeelprocedureReferte": {
+            "type": "string",
+            "nullable": true
+          },
+          "notificatieBundelId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContactDto": {
+        "type": "object",
+        "properties": {
+          "contactpersoonOnderneming": {
+            "type": "string",
+            "nullable": true
+          },
+          "naam": {
+            "type": "string",
+            "nullable": true
+          },
+          "voornaam": {
+            "type": "string",
+            "nullable": true
+          },
+          "telnr": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAanvraagCaDto": {
+        "required": [
+          "bijlagen",
+          "datumAanvraag",
+          "gebouw",
+          "niscode",
+          "redenAanvraag",
+          "skryvDossierId",
+          "skryvDossierReferte",
+          "verzoeker"
+        ],
+        "type": "object",
+        "properties": {
+          "redenAanvraag": {
+            "$ref": "#/components/schemas/RedenAanvraagCa"
+          },
+          "andereRedenAanvraag": {
+            "type": "string",
+            "nullable": true
+          },
+          "datumAanvraag": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "skryvDossierId": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
+          },
+          "skryvDossierReferte": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
+          },
+          "verzoeker": {
+            "$ref": "#/components/schemas/VerzoekerAanvraagDto"
+          },
+          "gebouw": {
+            "$ref": "#/components/schemas/GebouwDto"
+          },
+          "woningen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WoningDto"
+            },
+            "nullable": true
+          },
+          "algemeneOmschrijvingWoningen": {
+            "type": "string",
+            "nullable": true
+          },
+          "bijlagen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BijlageDto"
+            }
+          },
+          "niscode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "aantalWoningenInAanvraag": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAanvraagKotlabelDto": {
+        "required": [
+          "bijlagen",
+          "datumAanvraag",
+          "gebouw",
+          "niscode",
+          "redenAanvraag",
+          "skryvDossierId",
+          "skryvDossierReferte",
+          "verzoeker"
+        ],
+        "type": "object",
+        "properties": {
+          "redenAanvraag": {
+            "$ref": "#/components/schemas/RedenAanvraagKotlabel"
+          },
+          "andereRedenAanvraag": {
+            "type": "string",
+            "nullable": true
+          },
+          "datumAanvraag": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "skryvDossierId": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
+          },
+          "skryvDossierReferte": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
+          },
+          "verzoeker": {
+            "$ref": "#/components/schemas/VerzoekerAanvraagDto"
+          },
+          "aantalKotenAangevraagd": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "gebouw": {
+            "$ref": "#/components/schemas/GebouwDto"
+          },
+          "koten": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WoningDto"
+            },
+            "nullable": true
+          },
+          "algemeneOmschrijvingKoten": {
+            "type": "string",
+            "nullable": true
+          },
+          "bijlagen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BijlageDto"
+            }
+          },
+          "niscode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DetailBaseDto": {
+        "required": [
+          "$type"
+        ],
+        "type": "object",
+        "properties": {
+          "$type": {
+            "type": "string"
+          },
+          "redenAanvraagAndere": {
+            "type": "string",
+            "nullable": true
+          },
+          "datumStopzetting": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "redenStopzetting": {
+            "type": "string",
+            "nullable": true
+          },
+          "aantalWoningenInAanvraag": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "$type",
+          "mapping": {
+            "conformiteitsattest": "#/components/schemas/DetailCaDto",
+            "kotlabel": "#/components/schemas/DetailKotlabelDto"
+          }
+        }
+      },
+      "DetailCaDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DetailBaseDto"
+          },
+          {
+            "required": [
+              "redenAanvraag"
+            ],
+            "type": "object",
+            "properties": {
+              "redenAanvraag": {
+                "$ref": "#/components/schemas/RedenAanvraagCa"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "DetailKotlabelDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DetailBaseDto"
+          },
+          {
+            "required": [
+              "redenAanvraag"
+            ],
+            "type": "object",
+            "properties": {
+              "redenAanvraag": {
+                "$ref": "#/components/schemas/RedenAanvraagKotlabel"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "DosisInfoDto": {
+        "required": [
+          "referte"
+        ],
+        "type": "object",
+        "properties": {
+          "referte": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DosisInfoSubAanvraagDto": {
+        "required": [
+          "referte"
+        ],
+        "type": "object",
+        "properties": {
+          "referte": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EpcAanwezig": {
+        "enum": [
+          "Ja",
+          "Nee",
+          "WeetHetNiet",
+          "NietVanToepassing"
+        ],
+        "type": "string"
+      },
+      "ExterneInfoDto": {
+        "required": [
+          "skryv"
+        ],
+        "type": "object",
+        "properties": {
+          "skryv": {
+            "$ref": "#/components/schemas/SkryvInfoDto"
+          },
+          "dosis": {
+            "$ref": "#/components/schemas/DosisInfoDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExterneInfoSubAanvraagDto": {
+        "required": [
+          "vlok"
+        ],
+        "type": "object",
+        "properties": {
+          "vlok": {
+            "$ref": "#/components/schemas/VlokInfoSubAanvraagDto"
+          },
+          "skryv": {
+            "$ref": "#/components/schemas/SkryvInfoSubAanvraagDto"
+          },
+          "dosis": {
+            "$ref": "#/components/schemas/DosisInfoSubAanvraagDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExtraInfoDetailDto": {
+        "required": [
+          "id",
+          "isOpenstaandeVraag",
+          "verwachtAntwoord",
+          "vraag"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "verwachtAntwoord": {
+            "$ref": "#/components/schemas/VerwachtAntwoordType"
+          },
+          "datumAnnulatie": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "redenAnnulatie": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOpenstaandeVraag": {
+            "type": "boolean"
+          },
+          "vraag": {
+            "$ref": "#/components/schemas/VraagDetailDto"
+          },
+          "antwoord": {
+            "$ref": "#/components/schemas/AntwoordDetailDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExtraInfoDto": {
+        "required": [
+          "id",
+          "isOpenstaandeVraag",
+          "verwachtAntwoord",
+          "vraag"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "verwachtAntwoord": {
+            "$ref": "#/components/schemas/VerwachtAntwoordType"
+          },
+          "datumAnnulatie": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "redenAnnulatie": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOpenstaandeVraag": {
+            "type": "boolean"
+          },
+          "vraag": {
+            "$ref": "#/components/schemas/VraagDto"
+          },
+          "antwoord": {
+            "$ref": "#/components/schemas/AntwoordDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GebouwDto": {
+        "required": [
+          "adres",
+          "epcAanwezig"
+        ],
+        "type": "object",
+        "properties": {
+          "adres": {
+            "$ref": "#/components/schemas/AdresDto"
+          },
+          "omschrijving": {
+            "maxLength": 1024,
+            "type": "string",
+            "nullable": true
+          },
+          "epcAanwezig": {
+            "$ref": "#/components/schemas/EpcAanwezig"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GemeenteDto": {
+        "required": [
+          "gemeenteNaam",
+          "nisCode"
+        ],
+        "type": "object",
+        "properties": {
+          "gemeenteNaam": {
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "nisCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAanvraagResult": {
+        "required": [
+          "aanvraag",
+          "eTag"
+        ],
+        "type": "object",
+        "properties": {
+          "eTag": {
+            "type": "string"
+          },
+          "aanvraag": {
+            "$ref": "#/components/schemas/AanvraagDetailDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAanvragenResult": {
+        "required": [
+          "aanvragen"
+        ],
+        "type": "object",
+        "properties": {
+          "aanvragen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AanvraagListItemDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetCommunicatieLogsResult": {
+        "required": [
+          "communicatie",
+          "eTag"
+        ],
+        "type": "object",
+        "properties": {
+          "eTag": {
+            "type": "string"
+          },
+          "communicatie": {
+            "$ref": "#/components/schemas/CommunicatieDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetExterneRefertesDataResult": {
+        "required": [
+          "options"
+        ],
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetExtraInfoResult": {
+        "required": [
+          "extraInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "extraInfo": {
+            "$ref": "#/components/schemas/ExtraInfoDetailDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetRefertesDataResult": {
+        "required": [
+          "options"
+        ],
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetSubAanvraagResult": {
+        "required": [
+          "eTag",
+          "subAanvraag"
+        ],
+        "type": "object",
+        "properties": {
+          "eTag": {
+            "type": "string"
+          },
+          "subAanvraag": {
+            "$ref": "#/components/schemas/SubAanvraagDetailDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetSubAanvragenResult": {
+        "required": [
+          "subAanvragen"
+        ],
+        "type": "object",
+        "properties": {
+          "subAanvragen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubAanvraagDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetToegekendAanDataResult": {
+        "required": [
+          "options"
+        ],
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetTokenRequest": {
+        "type": "object",
+        "properties": {
+          "gebruikerId": {
+            "type": "string"
+          },
+          "gebruikersnaam": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetTokenResult": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthReportDto": {
+        "required": [
+          "checks",
+          "status",
+          "totalDuration"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HealthStatus"
+          },
+          "totalDuration": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HealthReportEntryDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthReportEntryDto": {
+        "required": [
+          "duration",
+          "name",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/HealthStatus"
+          },
+          "duration": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthStatus": {
+        "enum": [
+          "Unhealthy",
+          "Degraded",
+          "Healthy"
+        ],
+        "type": "string"
+      },
+      "Hoedanigheid": {
+        "enum": [
+          "HouderZakelijkRecht",
+          "Verhuurder",
+          "Bewoner",
+          "Woonmaatschappij",
+          "Eigenaar",
+          "GemandateerdeVerhuurder",
+          "Syndicus",
+          "VertegenwoordigerEigenaar"
+        ],
+        "type": "string"
+      },
+      "InfoVertegenwoordigdeDto": {
+        "required": [
+          "naam"
+        ],
+        "type": "object",
+        "properties": {
+          "naam": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "kboNummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "rijksregisterNummer": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MimeType": {
+        "enum": [
+          "Onbekend",
+          "Pdf",
+          "Png",
+          "Jpeg"
+        ],
+        "type": "string"
+      },
+      "NieuweNietToegekendeOfBeantwoordeAanvragenQueryRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/QueryData"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "antwoordVerkregenNaDatum": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "Oorsprong": {
+        "enum": [
+          "VlokLoket"
+        ],
+        "type": "string"
+      },
+      "OpenAanvragenVoorAdresQueryRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/QueryData"
+          },
+          {
+            "required": [
+              "aanvraagType",
+              "adresObjectIds",
+              "gebouwEenheidIds",
+              "gebouwId"
+            ],
+            "type": "object",
+            "properties": {
+              "aanvraagType": {
+                "$ref": "#/components/schemas/AanvraagType"
+              },
+              "adresObjectIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "gebouwId": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "gebouwEenheidIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "QueryData": {
+        "required": [
+          "query"
+        ],
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "query",
+          "mapping": {
+            "OpenAanvragenVoorAdres": "#/components/schemas/OpenAanvragenVoorAdresQueryRequest",
+            "NieuweNietToegekendeOfBeantwoordeAanvragen": "#/components/schemas/NieuweNietToegekendeOfBeantwoordeAanvragenQueryRequest"
+          }
+        }
+      },
+      "RedenAanvraagCa": {
+        "enum": [
+          "VerplichtConformiteitsattest",
+          "OpheffingBesluit",
+          "VrijwilligeBasis",
+          "NieuweInhuurname",
+          "Andere"
+        ],
+        "type": "string"
+      },
+      "RedenAanvraagKotlabel": {
+        "enum": [
+          "InKaderVanVerkoop",
+          "Vrijwillig",
+          "Andere"
+        ],
+        "type": "string"
+      },
+      "RedenStopzetting": {
+        "enum": [
+          "FouteAanvraag",
+          "GeenStudentenHuisvesting",
+          "AdresBestaatNiet",
+          "GeenKotlabelMogelijk",
+          "AanvragerNietToegestaan",
+          "Onvolledig",
+          "NietOntvankelijk",
+          "NietBetaald",
+          "OverdrachtZakelijkRecht",
+          "EindeVerhuur",
+          "Andere"
+        ],
+        "type": "string"
+      },
+      "RegistreerAntwoordDto": {
+        "required": [
+          "datum"
+        ],
+        "type": "object",
+        "properties": {
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inhoud": {
+            "type": "string",
+            "nullable": true
+          },
+          "bijlage": {
+            "$ref": "#/components/schemas/BijlageDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegistreerCommunicatieDto": {
+        "required": [
+          "bestemming",
+          "datum",
+          "inhoud"
+        ],
+        "type": "object",
+        "properties": {
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inhoud": {
+            "type": "string"
+          },
+          "bestemming": {
+            "$ref": "#/components/schemas/CommunicatieBestemming"
+          },
+          "kboNummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "rijksregisterNummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "correlationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "subAanvraagReferte": {
+            "type": "string",
+            "nullable": true
+          },
+          "notificatieBundelId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegistreerVraagDto": {
+        "required": [
+          "datum",
+          "inhoud",
+          "toegekendeGebruikerId",
+          "verwachtAntwoord"
+        ],
+        "type": "object",
+        "properties": {
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inhoud": {
+            "type": "string"
+          },
+          "verwachtAntwoord": {
+            "$ref": "#/components/schemas/VerwachtAntwoordType"
+          },
+          "bijlageType": {
+            "$ref": "#/components/schemas/BijlageType"
+          },
+          "omschrijvingAndereBijlage": {
+            "type": "string",
+            "nullable": true
+          },
+          "toegekendeGebruikerId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SkryvInfoDto": {
+        "required": [
+          "frontOfficeUrl",
+          "id",
+          "referte"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "referte": {
+            "type": "string"
+          },
+          "frontOfficeUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SkryvInfoSubAanvraagDto": {
+        "required": [
+          "frontOfficeUrl",
+          "id",
+          "referte"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "referte": {
+            "type": "string"
+          },
+          "frontOfficeUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubAanvraagBeoordeeldDto": {
+        "required": [
+          "betrokkenPersonenRefertes",
+          "datumBeoordeeld",
+          "deelProcedureReferte",
+          "entiteitReferte"
+        ],
+        "type": "object",
+        "properties": {
+          "deelProcedureReferte": {
+            "type": "string"
+          },
+          "entiteitReferte": {
+            "type": "string"
+          },
+          "datumBeoordeeld": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "betrokkenPersonenRefertes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubAanvraagDetailDto": {
+        "required": [
+          "aanvraagReferte",
+          "documentList",
+          "extern",
+          "referte",
+          "status",
+          "statusList"
+        ],
+        "type": "object",
+        "properties": {
+          "referte": {
+            "type": "string"
+          },
+          "aanvraagReferte": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SubAanvraagStatusDto"
+          },
+          "extern": {
+            "$ref": "#/components/schemas/ExterneInfoSubAanvraagDto"
+          },
+          "documentList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VlokDocumentDto"
+            }
+          },
+          "statusList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubAanvraagStatusDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubAanvraagDto": {
+        "required": [
+          "aanvraagReferte",
+          "documentList",
+          "extern",
+          "referte",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "referte": {
+            "type": "string"
+          },
+          "aanvraagReferte": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SubAanvraagStatusDto"
+          },
+          "extern": {
+            "$ref": "#/components/schemas/ExterneInfoSubAanvraagDto"
+          },
+          "documentList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VlokDocumentDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubAanvraagRedenStopzettingType": {
+        "enum": [
+          "VervalVlaamsKotlabel"
+        ],
+        "type": "string"
+      },
+      "SubAanvraagStatusDto": {
+        "required": [
+          "datum",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/SubAanvraagStatusType"
+          },
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "redenStopzettingType": {
+            "$ref": "#/components/schemas/SubAanvraagRedenStopzettingType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubAanvraagStatusType": {
+        "enum": [
+          "InBehandeling",
+          "Afgerond",
+          "StopGezet"
+        ],
+        "type": "string"
+      },
+      "SubAanvraagStopzettenDto": {
+        "required": [
+          "datumStopzetting",
+          "deelProcedureReferte",
+          "entiteitReferte"
+        ],
+        "type": "object",
+        "properties": {
+          "deelProcedureReferte": {
+            "type": "string"
+          },
+          "entiteitReferte": {
+            "type": "string"
+          },
+          "datumStopzetting": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubAanvraagTeBeoordelenDto": {
+        "required": [
+          "datumTeBeoordelen",
+          "deelProcedureKotlabelReferte",
+          "entiteitReferte"
+        ],
+        "type": "object",
+        "properties": {
+          "deelProcedureKotlabelReferte": {
+            "type": "string"
+          },
+          "entiteitReferte": {
+            "type": "string"
+          },
+          "datumTeBeoordelen": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubAanvragenBeoordeeldDto": {
+        "required": [
+          "subAanvragen"
+        ],
+        "type": "object",
+        "properties": {
+          "subAanvragen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubAanvraagBeoordeeldDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubAanvragenStopzettenDto": {
+        "required": [
+          "redenStopzettingType",
+          "subAanvragen"
+        ],
+        "type": "object",
+        "properties": {
+          "subAanvragen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubAanvraagStopzettenDto"
+            }
+          },
+          "redenStopzettingType": {
+            "$ref": "#/components/schemas/SubAanvraagRedenStopzettingType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateContactgegevensDto": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "telefoonNummer": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Verdieping": {
+        "enum": [
+          "NietVanToepassing",
+          "Kelder",
+          "Gelijkvloers",
+          "Tussen0En1",
+          "Verdieping1",
+          "Tussen1En2",
+          "Verdieping2",
+          "Tussen2En3",
+          "Verdieping3",
+          "Tussen3En4",
+          "Verdieping4",
+          "Tussen4En5",
+          "Verdieping5",
+          "Tussen5En6",
+          "Verdieping6",
+          "Zolder",
+          "Onbekend",
+          "Andere",
+          "Eengezinswoning",
+          "Souterrain"
+        ],
+        "type": "string"
+      },
+      "VerwachtAntwoordType": {
+        "enum": [
+          "Tekstueel",
+          "Document",
+          "Beide"
+        ],
+        "type": "string"
+      },
+      "VerzoekerAanvraagDto": {
+        "required": [
+          "contact",
+          "hoedanigheid",
+          "wettelijkVertegenwoordiger"
+        ],
+        "type": "object",
+        "properties": {
+          "hoedanigheid": {
+            "$ref": "#/components/schemas/Hoedanigheid"
+          },
+          "rrnr": {
+            "type": "string",
+            "nullable": true
+          },
+          "kbo": {
+            "type": "string",
+            "nullable": true
+          },
+          "contact": {
+            "$ref": "#/components/schemas/ContactDto"
+          },
+          "wettelijkVertegenwoordiger": {
+            "type": "boolean"
+          },
+          "infoVertegenwoordigde": {
+            "$ref": "#/components/schemas/InfoVertegenwoordigdeDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VerzoekerAanvraagListItemDto": {
+        "required": [
+          "hoedanigheid"
+        ],
+        "type": "object",
+        "properties": {
+          "hoedanigheid": {
+            "$ref": "#/components/schemas/Hoedanigheid"
+          },
+          "rrnr": {
+            "type": "string",
+            "nullable": true
+          },
+          "kbo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VlokDocumentDto": {
+        "required": [
+          "type",
+          "vlokReferte"
+        ],
+        "type": "object",
+        "properties": {
+          "vlokReferte": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/VlokDocumentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VlokDocumentType": {
+        "enum": [
+          "Conformiteitsattest",
+          "Weigeringsbeslissing",
+          "TechnischVerslag",
+          "VerslagGemeenschappelijkeFuncties"
+        ],
+        "type": "string"
+      },
+      "VlokInfoSubAanvraagDto": {
+        "required": [
+          "deelprocedureReferte",
+          "entiteitReferte"
+        ],
+        "type": "object",
+        "properties": {
+          "entiteitReferte": {
+            "type": "string"
+          },
+          "deelprocedureReferte": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VlokProblemDetails": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {}
+      },
+      "VraagDetailDto": {
+        "required": [
+          "datum",
+          "inhoud"
+        ],
+        "type": "object",
+        "properties": {
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inhoud": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "toegekendeGebruikerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "bijlageType": {
+            "$ref": "#/components/schemas/BijlageType"
+          },
+          "omschrijvingAndereBijlage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VraagDto": {
+        "required": [
+          "datum",
+          "inhoud"
+        ],
+        "type": "object",
+        "properties": {
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inhoud": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "toegekendeGebruikerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WoningDto": {
+        "required": [
+          "woningType"
+        ],
+        "type": "object",
+        "properties": {
+          "woningType": {
+            "$ref": "#/components/schemas/WoningType"
+          },
+          "adres": {
+            "$ref": "#/components/schemas/AdresDto"
+          },
+          "verdieping": {
+            "$ref": "#/components/schemas/Verdieping"
+          },
+          "verdiepingAndere": {
+            "type": "string",
+            "nullable": true
+          },
+          "locatie": {
+            "type": "string",
+            "nullable": true
+          },
+          "kamernummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "epcAanwezig": {
+            "$ref": "#/components/schemas/EpcAanwezig"
+          },
+          "omschrijving": {
+            "maxLength": 1024,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WoningGoederenDto": {
+        "required": [
+          "woningen"
+        ],
+        "type": "object",
+        "properties": {
+          "woningen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WoningDto"
+            }
+          },
+          "algemeneOmschrijvingWoningen": {
+            "maxLength": 1024,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WoningType": {
+        "enum": [
+          "Woning",
+          "Eengezinswoning",
+          "Kamer"
+        ],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme. Example \"ey...\"",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

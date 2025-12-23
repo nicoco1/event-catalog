@@ -1,0 +1,30 @@
+---
+id: NieuweAanvraagDosisInfoMessageEvent
+name: Dosis Dossier Created
+summary: |
+  Event dat wordt verzonden om dosis info zoals dosis dossier referte op de aanvraag bij te houden (NieuweAanvraagDosisInfoMessageEvent).
+version: 1.0.0
+badges:
+    - content: NieuweAanvraagGestartSaga
+      backgroundColor: blue
+      textColor: blue
+      icon: DocumentCheckIcon
+---
+
+## Overview
+Het `NieuweAanvraagDosisInfoMessageEvent` wordt verzonden om dosis info zoals dosis dossier referte op de aanvraag bij te houden.
+Dit event volgt na `NieuweAanvraagDosisDossierMessageEvent`
+
+## Architecture diagram
+
+<NodeGraph />
+
+## Payload example
+
+Een voorbeeld van de payload die wordt verzonden met dit event:
+
+```json title="Payload example"
+{
+  "AanvraagReferte": "AV25-00000001"
+}
+```
