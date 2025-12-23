@@ -2,70 +2,58 @@
 id: BestemmingVoorAanvraagGeregistreerdSaga Flow
 name: Bestemming Voor Aanvraag Geregistreerd Saga Flow
 version: 1.0.0
-summary: Flow voor het verwerken van een aanvraag nadat een bestemming geregistreerd werd. Dit omvat het versturen van een ontvangstbevestiging notificatie, dosis dossier aanmaak en aanvraag documenten overnemen in VLOK.
+summary: | 
+  Flow voor het verwerken van een aanvraag nadat een bestemming geregistreerd werd. Dit omvat het versturen van een ontvangstbevestiging notificatie, dosis dossier aanmaak en aanvraag documenten overnemen in VLOK.
 steps:
-  - id: "start_saga"
-    title: Start Saga
+  - id: "initiate_saga"
+    title: Initiate Saga
     message:
       id: BestemmingVoorAanvraagGeregistreerdEvent
       version: 1.0.0
-    next_step:
-      id: "send_nieuwe_aanvraag_notificatie"
-      label: Send NieuweAanvraagNotificatieMessageEvent
+    next_steps:
+      - id: "upload_documents"
+        label: "Upload aanvraag documenten in VLOK"
+      - id: "send_notificatie"
+        label: "Verstuur ontvangstbevestiging"
 
-  - id: "send_nieuwe_aanvraag_notificatie"
-    title: Send NieuweAanvraagNotificatieMessageEvent
+  - id: "upload_documents"
+    title: Upload aanvraag documenten in VLOK
+    message:
+      id: UploadDocumentRequest
+      version: 1.0.0
+    next_step:
+      id: "upload_documents_documentenmodule"
+      label: "Upload documenten"
+
+  - id: "upload_documents_documentenmodule"
+    title: Upload documenten in Documentenmodule
+
+  - id: "send_notificatie"
+    title: Verstuur ontvangstbevestiging notificatie 
     message:
       id: NieuweAanvraagNotificatieMessageEvent
       version: 1.0.0
     next_step:
-      id: "wait_for_nieuwe_aanvraag_notificatie_response"
-      label: Wait for NieuweAanvraagNotificatieResponseEvent
+      id: "create_dosis_dossier"
+      label: "notificatie verzonden"
 
-  - id: "wait_for_nieuwe_aanvraag_notificatie_response"
-    title: Wait for NieuweAanvraagNotificatieResponseEvent
-    message:
-      id: NieuweAanvraagNotificatieResponseEvent
-      version: 1.0.0
-    next_step:
-      id: "send_nieuwe_aanvraag_dosis_dossier"
-      label: Send NieuweAanvraagDosisDossierMessageEvent
-
-  - id: "send_nieuwe_aanvraag_dosis_dossier"
-    title: Send NieuweAanvraagDosisDossierMessageEvent
+  - id: "create_dosis_dossier"
+    title: Maak dosis dossier
     message:
       id: NieuweAanvraagDosisDossierMessageEvent
       version: 1.0.0
     next_step:
-      id: "wait_for_nieuwe_aanvraag_dosis_dossier_response"
-      label: Wait for NieuweAanvraagDosisDossierResponseEvent
+      id: "update_dosis_info"
+      label: dosis dossier aangemaakt
 
-  - id: "wait_for_nieuwe_aanvraag_dosis_dossier_response"
-    title: Wait for NieuweAanvraagDosisDossierResponseEvent
-    message:
-      id: NieuweAanvraagDosisDossierResponseEvent
-      version: 1.0.0
-    next_step:
-      id: "send_nieuwe_aanvraag_dosis_info"
-      label: Send NieuweAanvraagDosisInfoMessageEvent
-
-  - id: "send_nieuwe_aanvraag_dosis_info"
-    title: Send NieuweAanvraagDosisInfoMessageEvent
+  - id: "update_dosis_info"
+    title: Update dosis dossier
     message:
       id: NieuweAanvraagDosisInfoMessageEvent
       version: 1.0.0
     next_step:
-      id: "wait_for_nieuwe_aanvraag_dosis_info_response"
-      label: Wait for NieuweAanvraagDosisInfoResponseEvent
-
-  - id: "wait_for_nieuwe_aanvraag_dosis_info_response"
-    title: Wait for NieuweAanvraagDosisInfoResponseEvent
-    message:
-      id: NieuweAanvraagDosisInfoResponseEvent
-      version: 1.0.0
-    next_step:
       id: "complete_saga"
-      label: Complete Saga
+      label: "aanvraag bijgewerkt"
 
   - id: "complete_saga" 
     title: Complete Saga
@@ -77,14 +65,24 @@ steps:
 ## Flow description
 
 Deze flow beschrijft de verwerking die plaatsvindt nadat een `BestemmingVoorAanvraagGeregistreerdEvent` is ontvangen. De flow coördineert verschillende stappen, waaronder het verzenden van notificaties, het aanmaken van een dossier in Dosis, en het uploaden van aanvraagdocumenten. Elke stap wacht op een bevestiging voordat de volgende stap wordt uitgevoerd, wat zorgt voor een betrouwbare en traceerbare verwerking van de aanvraagbestemming registratie.
+
+
+:::warning
+Opgelet: De documentenupload zit nog niet in dezeldfde saga, maar in een aparte eventhandler.
+:::
+
+
+
 - **Trigger:** `BestemmingVoorAanvraagGeregistreerdEvent` (gepubliceerd door `AanvragenService`)
 - **Stap 1:** Verzenden van een `NieuweAanvraagNotificatieMessageEvent` om de aanvrager te informeren over de registratie van de bestemming.
 - **Stap 2:** Aanmaak van een dossier in Dosis via een `NieuweAanvraagDosisDossierMessageEvent`.
-- **Stap 3:** Uploaden van aanvullende informatie naar Dosis met een `NieuweAanvraagDosisInfoMessageEvent`.
+- **Stap 3:** Bijwerken van de aanvraag met dosis informatie via een `NieuweAanvraagDosisInfoMessageEvent`.
 
 
 ## Linked artefacts
 - Event: [BestemmingVoorAanvraagGeregistreerdEvent](../../services/AanvragenService/events/BestemmingVoorAanvraagGeregistreerdEvent/)
 - Event: [NieuweAanvraagNotificatieMessageEvent](../../services/AanvragenService/events/NieuweAanvraagNotificatieMessageEvent/)
 - Event: [NieuweAanvraagDosisDossierMessageEvent](../../services/AanvragenService/events/NieuweAanvraagDosisDossierMessageEvent/)
+- Event: [NieuweAanvraagDosisInfoMessageEvent](../../services/AanvragenService/events/NieuweAanvraagDosisInfoMessageEvent/)
 - Service: [AanvragenService](../../services/AanvragenService/)
+- Service: [IntegrationProcessStatus](../../services/IntegrationProcessStatus/)

@@ -8,15 +8,21 @@ summary: |
 receives:
   - id: RegistreerAanvraagKotlabelApiRequest
     version: 1.0.0
-  - id: UploadDocumentRequest
-    version: 1.0.0
   - id: NieuweAanvraagGeregistreerdEvent
+    version: 1.0.0
+  - id: BestemmingVoorAanvraagGeregistreerdEvent
     version: 1.0.0
 
 sends:
   - id: NieuweAanvraagGeregistreerdEvent
     version: 1.0.0
   - id: BestemmingVoorAanvraagGeregistreerdEvent
+    version: 1.0.0
+  - id: NieuweAanvraagNotificatieMessageEvent
+    version: 1.0.0
+  - id: NieuweAanvraagDosisDossierMessageEvent
+    version: 1.0.0
+  - id: NieuweAanvraagDosisInfoMessageEvent
     version: 1.0.0
 
 specifications:
