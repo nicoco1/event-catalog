@@ -13,7 +13,7 @@
     "lint:eventcatalog:verbose": "eventcatalog-linter --verbose"
   },
   "dependencies": {
-    "@eventcatalog/core": "^3.1.0"
+    "@eventcatalog/core": "^3.2.2"
   },
   "devDependencies": {
     "@eventcatalog/linter": "^0.0.5"
