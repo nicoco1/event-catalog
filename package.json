@@ -10,12 +10,14 @@
     "generate": "eventcatalog generate",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint:eventcatalog": "eventcatalog-linter",
-    "lint:eventcatalog:verbose": "eventcatalog-linter --verbose"
+    "lint:eventcatalog:verbose": "eventcatalog-linter --verbose",
+    "update:preview": "npx npm-check-updates -u",
+    "update:apply": "npx npm-check-updates -u && npm install"
   },
   "dependencies": {
-    "@eventcatalog/core": "^3.2.2"
+    "@eventcatalog/core": "^3.8.0"
   },
   "devDependencies": {
-    "@eventcatalog/linter": "^0.0.5"
+    "@eventcatalog/linter": "^0.1.0"
   }
 }
