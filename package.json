@@ -15,9 +15,9 @@
     "update:apply": "npx npm-check-updates -u && npm install"
   },
   "dependencies": {
-    "@eventcatalog/core": "^3.8.0"
+    "@eventcatalog/core": "^3.14.3"
   },
   "devDependencies": {
-    "@eventcatalog/linter": "^0.1.0"
+    "@eventcatalog/linter": "^1.0.5"
   }
 }
