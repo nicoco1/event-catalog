@@ -1,0 +1,30 @@
+---
+id: NieuweAanvraagNotificatieMessageEvent
+name: Nieuwe Aanvraag Notificatie Initiated
+summary: |
+  Event dat wordt verzonden om een notificatie te versturen bij een nieuwe aanvraag. Dit is de ontvangstbevestiging voor de aanvrager (NieuweAanvraagNotificatieMessageEvent).
+version: 1.0.0
+badges:
+    - content: NieuweAanvraagGestartSaga
+      backgroundColor: blue
+      textColor: blue
+      icon: DocumentCheckIcon
+---
+
+## Overview
+Het `NieuweAanvraagNotificatieMessageEvent` wordt gepubliceerd door de AanvragenService wanneer een nieuwe aanvraag met bestemming is geregistreerd.
+
+
+## Architecture diagram
+
+<NodeGraph />
+
+## Payload example
+
+Een voorbeeld van de payload die wordt verzonden met dit event:
+
+```json title="Payload example"
+{
+  "AanvraagReferte": "AV25-00000001"
+}
+```

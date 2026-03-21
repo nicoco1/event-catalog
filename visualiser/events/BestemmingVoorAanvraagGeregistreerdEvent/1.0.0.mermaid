@@ -1,0 +1,21 @@
+%% EventCatalog Mermaid Diagram
+%% Resource: events/BestemmingVoorAanvraagGeregistreerdEvent (v1.0.0)
+%% Generated: 2026-03-21T20:37:19.215Z
+
+flowchart LR
+
+    %% Style definitions
+    classDef events fill:#f97316,stroke:#c2410c,color:#fff
+    classDef services fill:#ec4899,stroke:#be185d,color:#fff
+
+    %% Nodes
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0>"Bestemming Geregistreerd (1.0.0)"]:::events
+    AanvragenService_1_0_0[["AanvragenService (1.0.0)"]]:::services
+    AanvragenService_1_0_0[["AanvragenService (1.0.0)"]]:::services
+    IntegrationProcessFormulierenLoket_1_0_0[["IntegrationProcess FormulierenLoket (1.0.0)"]]:::services
+
+    %% Edges
+    AanvragenService_1_0_0 -->|"publishes  event"| BestemmingVoorAanvraagGeregistreerdEvent_1_0_0
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0 -->|"subscribed by"| AanvragenService_1_0_0
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0 -->|"subscribed by"| IntegrationProcessFormulierenLoket_1_0_0
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0 -->|"publishes and subscribes"| AanvragenService_1_0_0

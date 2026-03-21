@@ -1,0 +1,30 @@
+---
+id: NieuweAanvraagDosisDossierMessageEvent
+name: Nieuwe Aanvraag Dosis Dossier Initiated
+summary: |
+  Event dat wordt verzonden om een dosis dossier aan te maken bij een nieuwe aanvraag (NieuweAanvraagDosisDossierMessageEvent).
+version: 1.0.0
+badges:
+    - content: NieuweAanvraagGestartSaga
+      backgroundColor: blue
+      textColor: blue
+      icon: DocumentCheckIcon
+---
+
+## Overview
+Het `NieuweAanvraagDosisDossierMessageEvent` wordt verzonden wanneer er een nieuwe aanvraag is geregistreerd en er een dosis dossier moet worden aangemaakt. 
+Dit event volgt na `NieuweAanvraagNotificatieMessageEvent`
+
+## Architecture diagram
+
+<NodeGraph />
+
+## Payload example
+
+Een voorbeeld van de payload die wordt verzonden met dit event:
+
+```json title="Payload example"
+{
+  "AanvraagReferte": "AV25-00000001"
+}
+```

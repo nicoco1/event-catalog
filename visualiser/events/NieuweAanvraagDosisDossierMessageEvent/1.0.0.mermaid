@@ -1,0 +1,18 @@
+%% EventCatalog Mermaid Diagram
+%% Resource: events/NieuweAanvraagDosisDossierMessageEvent (v1.0.0)
+%% Generated: 2026-03-21T20:37:19.231Z
+
+flowchart LR
+
+    %% Style definitions
+    classDef events fill:#f97316,stroke:#c2410c,color:#fff
+    classDef services fill:#ec4899,stroke:#be185d,color:#fff
+
+    %% Nodes
+    NieuweAanvraagDosisDossierMessageEvent_1_0_0>"Nieuwe Aanvraag Dosis Dossier Initiated (1.0.0)"]:::events
+    AanvragenService_1_0_0[["AanvragenService (1.0.0)"]]:::services
+    IntegrationProcessStatus_1_0_0[["IntegrationProcess Status (1.0.0)"]]:::services
+
+    %% Edges
+    AanvragenService_1_0_0 -->|"publishes  event"| NieuweAanvraagDosisDossierMessageEvent_1_0_0
+    NieuweAanvraagDosisDossierMessageEvent_1_0_0 -->|"subscribed by"| IntegrationProcessStatus_1_0_0

@@ -1,0 +1,27 @@
+%% EventCatalog Mermaid Diagram
+%% Resource: flows/BestemmingVoorAanvraagGeregistreerdSaga Flow (v1.0.0)
+%% Generated: 2026-03-21T20:37:19.364Z
+
+flowchart LR
+
+    %% Style definitions
+    classDef events fill:#f97316,stroke:#c2410c,color:#fff
+    classDef commands fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef step fill:#374151,stroke:#1f2937,color:#fff
+
+    %% Nodes
+    step_initiate_saga>"Bestemming Geregistreerd (1.0.0)"]:::events
+    step_upload_documents>"Upload Document Request (1.0.0)"]:::commands
+    step_upload_documents_documentenmodule["Upload documenten in Documentenmodule"]:::step
+    step_send_notificatie>"Nieuwe Aanvraag Notificatie Initiated (1.0.0)"]:::events
+    step_create_dosis_dossier>"Nieuwe Aanvraag Dosis Dossier Initiated (1.0.0)"]:::events
+    step_update_dosis_info>"Dosis Dossier Created (1.0.0)"]:::events
+    step_complete_saga["Complete Saga"]:::step
+
+    %% Edges
+    step_initiate_saga -->|"Upload aanvraag documenten in VLOK"| step_upload_documents
+    step_initiate_saga -->|"Verstuur ontvangstbevestiging"| step_send_notificatie
+    step_upload_documents -->|"Upload documenten"| step_upload_documents_documentenmodule
+    step_send_notificatie -->|"notificatie verzonden"| step_create_dosis_dossier
+    step_create_dosis_dossier -->|"dosis dossier aangemaakt"| step_update_dosis_info
+    step_update_dosis_info -->|"aanvraag bijgewerkt"| step_complete_saga

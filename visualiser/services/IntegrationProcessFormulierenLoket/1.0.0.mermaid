@@ -1,0 +1,31 @@
+%% EventCatalog Mermaid Diagram
+%% Resource: services/IntegrationProcessFormulierenLoket (v1.0.0)
+%% Generated: 2026-03-21T20:37:19.265Z
+
+flowchart LR
+
+    %% Style definitions
+    classDef events fill:#f97316,stroke:#c2410c,color:#fff
+    classDef services fill:#ec4899,stroke:#be185d,color:#fff
+    classDef commands fill:#3b82f6,stroke:#1d4ed8,color:#fff
+
+    %% Nodes
+    FormulierAanvraagKotlabelSubmittedEvent_1_0_0>"Formulier Aanvraag Kotlabel Submitted (1.0.0)"]:::events
+    IntegrationProcessFormulierenLoket_1_0_0[["IntegrationProcess FormulierenLoket (1.0.0)"]]:::services
+    LoketWebhookEndpoint_1_0_0[["Loket Webhook Endpoint (1.0.0)"]]:::services
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0>"Bestemming Geregistreerd (1.0.0)"]:::events
+    AanvragenService_1_0_0[["AanvragenService (1.0.0)"]]:::services
+    IntegrationProcessFormulierenLoket_1_0_0[["IntegrationProcess FormulierenLoket (1.0.0)"]]:::services
+    RegistreerAanvraagKotlabelApiRequest_1_0_0>"Registreer Aanvraag Kotlabel (1.0.0)"]:::commands
+    UploadDocumentRequest_1_0_0>"Upload Document Request (1.0.0)"]:::commands
+    RestApiService_1_0_0[["VLOK REST API (1.0.0)"]]:::services
+
+    %% Edges
+    LoketWebhookEndpoint_1_0_0 -->|"publishes  event"| FormulierAanvraagKotlabelSubmittedEvent_1_0_0
+    FormulierAanvraagKotlabelSubmittedEvent_1_0_0 -->|"subscribed by"| IntegrationProcessFormulierenLoket_1_0_0
+    AanvragenService_1_0_0 -->|"publishes  event"| BestemmingVoorAanvraagGeregistreerdEvent_1_0_0
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0 -->|"subscribed by"| IntegrationProcessFormulierenLoket_1_0_0
+    IntegrationProcessFormulierenLoket_1_0_0 -->|"invokes"| RegistreerAanvraagKotlabelApiRequest_1_0_0
+    RegistreerAanvraagKotlabelApiRequest_1_0_0 -->|"accepts"| AanvragenService_1_0_0
+    IntegrationProcessFormulierenLoket_1_0_0 -->|"invokes"| UploadDocumentRequest_1_0_0
+    UploadDocumentRequest_1_0_0 -->|"accepts"| RestApiService_1_0_0

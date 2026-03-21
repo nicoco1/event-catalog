@@ -1,0 +1,18 @@
+%% EventCatalog Mermaid Diagram
+%% Resource: commands/UploadDocumentRequest (v1.0.0)
+%% Generated: 2026-03-21T20:37:19.243Z
+
+flowchart LR
+
+    %% Style definitions
+    classDef commands fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef services fill:#ec4899,stroke:#be185d,color:#fff
+
+    %% Nodes
+    UploadDocumentRequest_1_0_0>"Upload Document Request (1.0.0)"]:::commands
+    IntegrationProcessFormulierenLoket_1_0_0[["IntegrationProcess FormulierenLoket (1.0.0)"]]:::services
+    RestApiService_1_0_0[["VLOK REST API (1.0.0)"]]:::services
+
+    %% Edges
+    IntegrationProcessFormulierenLoket_1_0_0 -->|"invokes"| UploadDocumentRequest_1_0_0
+    UploadDocumentRequest_1_0_0 -->|"accepts"| RestApiService_1_0_0

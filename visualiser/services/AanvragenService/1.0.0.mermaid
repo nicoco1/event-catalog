@@ -1,0 +1,39 @@
+%% EventCatalog Mermaid Diagram
+%% Resource: services/AanvragenService (v1.0.0)
+%% Generated: 2026-03-21T20:37:19.257Z
+
+flowchart LR
+
+    %% Style definitions
+    classDef commands fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef services fill:#ec4899,stroke:#be185d,color:#fff
+    classDef events fill:#f97316,stroke:#c2410c,color:#fff
+
+    %% Nodes
+    RegistreerAanvraagKotlabelApiRequest_1_0_0>"Registreer Aanvraag Kotlabel (1.0.0)"]:::commands
+    AanvragenService_1_0_0[["AanvragenService (1.0.0)"]]:::services
+    IntegrationProcessFormulierenLoket_1_0_0[["IntegrationProcess FormulierenLoket (1.0.0)"]]:::services
+    NieuweAanvraagGeregistreerdEvent_1_0_0>"Nieuwe Aanvraag Geregistreerd (1.0.0)"]:::events
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0>"Bestemming Geregistreerd (1.0.0)"]:::events
+    AanvragenService_1_0_0[["AanvragenService (1.0.0)"]]:::services
+    NieuweAanvraagNotificatieMessageEvent_1_0_0>"Nieuwe Aanvraag Notificatie Initiated (1.0.0)"]:::events
+    IntegrationProcessStatus_1_0_0[["IntegrationProcess Status (1.0.0)"]]:::services
+    NieuweAanvraagDosisDossierMessageEvent_1_0_0>"Nieuwe Aanvraag Dosis Dossier Initiated (1.0.0)"]:::events
+    NieuweAanvraagDosisInfoMessageEvent_1_0_0>"Dosis Dossier Created (1.0.0)"]:::events
+
+    %% Edges
+    IntegrationProcessFormulierenLoket_1_0_0 -->|"invokes"| RegistreerAanvraagKotlabelApiRequest_1_0_0
+    RegistreerAanvraagKotlabelApiRequest_1_0_0 -->|"accepts"| AanvragenService_1_0_0
+    AanvragenService_1_0_0 -->|"publishes  event"| NieuweAanvraagGeregistreerdEvent_1_0_0
+    NieuweAanvraagGeregistreerdEvent_1_0_0 -->|"subscribed by"| AanvragenService_1_0_0
+    AanvragenService_1_0_0 -->|"publishes  event"| BestemmingVoorAanvraagGeregistreerdEvent_1_0_0
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0 -->|"subscribed by"| AanvragenService_1_0_0
+    BestemmingVoorAanvraagGeregistreerdEvent_1_0_0 -->|"subscribed by"| IntegrationProcessFormulierenLoket_1_0_0
+    AanvragenService_1_0_0 -->|"publishes  event"| NieuweAanvraagNotificatieMessageEvent_1_0_0
+    NieuweAanvraagNotificatieMessageEvent_1_0_0 -->|"subscribed by"| IntegrationProcessStatus_1_0_0
+    AanvragenService_1_0_0 -->|"publishes  event"| NieuweAanvraagDosisDossierMessageEvent_1_0_0
+    NieuweAanvraagDosisDossierMessageEvent_1_0_0 -->|"subscribed by"| IntegrationProcessStatus_1_0_0
+    AanvragenService_1_0_0 -->|"publishes  event"| NieuweAanvraagDosisInfoMessageEvent_1_0_0
+    NieuweAanvraagDosisInfoMessageEvent_1_0_0 -->|"subscribed by"| IntegrationProcessStatus_1_0_0
+    AanvragenService_1_0_0 -->|"publishes event & receives event"| NieuweAanvraagGeregistreerdEvent_1_0_0
+    AanvragenService_1_0_0 -->|"publishes event & receives event"| BestemmingVoorAanvraagGeregistreerdEvent_1_0_0

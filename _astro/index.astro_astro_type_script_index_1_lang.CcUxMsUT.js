@@ -1,0 +1,1 @@
+import{r as n}from"./mermaid-zoom.BxST_syi.js";import"./preload-helper.BvKcMGkc.js";function e(){const t=document.getElementsByClassName("plantuml");t.length>0&&n(t)}e();document.addEventListener("astro:page-load",e);window.renderPlantUML=t=>{n(t)};

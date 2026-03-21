@@ -1,0 +1,25 @@
+%% EventCatalog Mermaid Diagram
+%% Resource: services/IntegrationProcessStatus (v1.0.0)
+%% Generated: 2026-03-21T20:37:19.270Z
+
+flowchart LR
+
+    %% Style definitions
+    classDef events fill:#f97316,stroke:#c2410c,color:#fff
+    classDef services fill:#ec4899,stroke:#be185d,color:#fff
+
+    %% Nodes
+    NieuweAanvraagNotificatieMessageEvent_1_0_0>"Nieuwe Aanvraag Notificatie Initiated (1.0.0)"]:::events
+    IntegrationProcessStatus_1_0_0[["IntegrationProcess Status (1.0.0)"]]:::services
+    AanvragenService_1_0_0[["AanvragenService (1.0.0)"]]:::services
+    NieuweAanvraagDosisDossierMessageEvent_1_0_0>"Nieuwe Aanvraag Dosis Dossier Initiated (1.0.0)"]:::events
+    NieuweAanvraagDosisInfoMessageEvent_1_0_0>"Dosis Dossier Created (1.0.0)"]:::events
+    IntegrationProcessStatus_1_0_0[["IntegrationProcess Status (1.0.0)"]]:::services
+
+    %% Edges
+    AanvragenService_1_0_0 -->|"publishes  event"| NieuweAanvraagNotificatieMessageEvent_1_0_0
+    NieuweAanvraagNotificatieMessageEvent_1_0_0 -->|"subscribed by"| IntegrationProcessStatus_1_0_0
+    AanvragenService_1_0_0 -->|"publishes  event"| NieuweAanvraagDosisDossierMessageEvent_1_0_0
+    NieuweAanvraagDosisDossierMessageEvent_1_0_0 -->|"subscribed by"| IntegrationProcessStatus_1_0_0
+    AanvragenService_1_0_0 -->|"publishes  event"| NieuweAanvraagDosisInfoMessageEvent_1_0_0
+    NieuweAanvraagDosisInfoMessageEvent_1_0_0 -->|"subscribed by"| IntegrationProcessStatus_1_0_0

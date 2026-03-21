@@ -1,0 +1,30 @@
+%% EventCatalog Mermaid Diagram
+%% Resource: flows/NieuweAanvraagKotlabelSubmittedFlow (v1.0.0)
+%% Generated: 2026-03-21T20:37:19.370Z
+
+flowchart LR
+
+    %% Style definitions
+    classDef events fill:#f97316,stroke:#c2410c,color:#fff
+    classDef services fill:#ec4899,stroke:#be185d,color:#fff
+    classDef commands fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef actor fill:#eab308,stroke:#a16207,color:#000
+
+    %% Nodes
+    step_nieuw_aanvraag_formulier_ontvangen>"Formulier Aanvraag Kotlabel Submitted (1.0.0)"]:::events
+    step_integration_process_formulieren_loket[["IntegrationProcess FormulierenLoket (1.0.0)"]]:::services
+    step_registreer_aanvraag_command>"Registreer Aanvraag Kotlabel (1.0.0)"]:::commands
+    step_aanvragen_service_aanvraag_registreren[["AanvragenService (1.0.0)"]]:::services
+    step_nieuwe_aanvraag_geregistreerd>"Nieuwe Aanvraag Geregistreerd (1.0.0)"]:::events
+    step_aanvragen_service_bestemming_registreren[["AanvragenService (1.0.0)"]]:::services
+    step_bestemming_geregistreerd>"Bestemming Geregistreerd (1.0.0)"]:::events
+    step_aanvraag_zichtbaar_voor_gemeente(("step-aanvraag_zichtbaar_voor_gemeente")):::actor
+
+    %% Edges
+    step_nieuw_aanvraag_formulier_ontvangen -->|"Nieuw formulier ontvangen en verwerken"| step_integration_process_formulieren_loket
+    step_integration_process_formulieren_loket -->|"Registreer aanvraag"| step_registreer_aanvraag_command
+    step_registreer_aanvraag_command -->|"Nieuwe aanvraag registreren"| step_aanvragen_service_aanvraag_registreren
+    step_aanvragen_service_aanvraag_registreren -->|"Nieuwe aanvraag geregistreerd"| step_nieuwe_aanvraag_geregistreerd
+    step_nieuwe_aanvraag_geregistreerd -->|"Bestemming registreren"| step_aanvragen_service_bestemming_registreren
+    step_aanvragen_service_bestemming_registreren -->|"Bestemming geregistreerd"| step_bestemming_geregistreerd
+    step_bestemming_geregistreerd -->|"Aanvraag zichtbaar voor gemeente"| step_aanvraag_zichtbaar_voor_gemeente
